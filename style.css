@@ -1,51 +1,181 @@
-// 1. GAME DATA
-const games = [
-    { name: "God of War II", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
-    { name: "Jak and Daxter", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
-];
-
-// Load Games into UI
-const list = document.getElementById('gameList');
-games.forEach(g => {
-    let card = document.createElement('div');
-    card.className = 'game-card';
-    card.innerHTML = `<img src="${g.img}" style="width:100%;height:100%;object-fit:cover;">`;
-    card.onclick = () => alert("Emulator core loading: " + g.name);
-    list.appendChild(card);
-});
-
-// 2. SETTINGS LOGIC
-function toggleModal(id) {
-    const m = document.getElementById(id);
-    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+/* RESET & VARIABLES */
+:root {
+    --bg: #1a1a1b;
+    --text: #ffffff;
+    --accent: #00c3ff;
+    --surface: #2d2d2e;
+    --zoom: 1;
 }
 
-function changeTheme() {
-    const body = document.body;
-    const current = body.getAttribute('data-theme');
-    body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+[data-theme="light"] {
+    --bg: #e2e2e2;
+    --text: #1a1a1a;
+    --accent: #e60012;
+    --surface: #ffffff;
 }
 
-function adjustScale(val) {
-    // This actually resizes the UI for your big monitor
-    document.documentElement.style.setProperty('--scale', val / 100);
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    zoom: var(--zoom);
+    transition: background 0.4s ease;
 }
 
-function setFPS(val) {
-    const display = document.getElementById('fpsDisplay');
-    display.innerText = (val == 0) ? "144 FPS" : val + " FPS";
-    alert("System limit set to " + val);
+/* TOP STATUS BAR */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 60px;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 300;
 }
 
-// 3. NEWS SIMULATOR (Pulls fake 'live' data)
-const fakeNews = [
-    "PS2 Emulator Core updated to v1.2.4",
-    "New Homebrew: 'Super Tux' ported to JS",
-    "Performance tip: Enable Hardware Acceleration"
-];
-document.getElementById('newsFeed').innerHTML = fakeNews.map(n => `<p>• ${n}</p>`).join('');
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-// 4. CLOCK
-setInterval(() => {
-    document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-}, 1000);
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, #ff4500, #ff8c00);
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* CAROUSEL LOGIC */
+.console-viewport {
+    padding-top: 5vh;
+}
+
+.selection-title {
+    margin-left: 10%;
+    font-size: 1.8rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.game-carousel {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px 10%;
+    gap: 15px;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Hide standard scroll */
+}
+
+.game-carousel::-webkit-scrollbar { display: none; }
+
+.game-card {
+    min-width: 280px;
+    aspect-ratio: 1 / 1;
+    background-color: var(--surface);
+    border: 4px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-card:hover, .game-card.focused {
+    transform: scale(1.08) translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+    z-index: 10;
+}
+
+/* FOOTER NAVIGATION */
+.system-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 30px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.menu-items {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-circle {
+    width: 65px;
+    height: 65px;
+    background-color: var(--surface);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    border: 2px solid transparent;
+}
+
+.menu-btn:hover .btn-circle {
+    border-color: var(--accent);
+    transform: scale(1.15);
+}
+
+/* MODALS */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-card {
+    background: var(--surface);
+    padding: 50px;
+    border-radius: 20px;
+    width: 500px;
+    max-width: 90%;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.confirm-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
