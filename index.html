@@ -1,36 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>JS Console</title>
-    <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@latest/coi-serviceworker.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="top-bar">
-        <div class="profile-icon"></div>
-        <div class="time" id="clock">12:00</div>
-    </div>
+<div id="settingsModal" class="modal">
+    <h2>System Settings</h2>
+    
+    <label>Theme:</label>
+    <button onclick="toggleTheme()">Toggle Light/Dark</button>
 
-    <div class="carousel-container">
-        <div class="game-list" id="gameList">
-            </div>
-    </div>
+    <label>Resolution (UI Scale):</label>
+    <select onchange="updateResolution(this.value)">
+        <option value="12vw">Small (Compact)</option>
+        <option value="15vw" selected>Medium (Standard)</option>
+        <option value="20vw">Large (TV Mode)</option>
+    </select>
 
-    <div class="system-menu">
-        <div class="sys-item news" onclick="showNews()">
-            <div class="icon">📰</div>
-            <span>News</span>
-        </div>
-        <div class="sys-item controllers" onclick="showControllerConfig()">
-            <div class="icon">🎮</div>
-            <span>Controllers</span>
-        </div>
-        <div class="sys-item settings">
-            <div class="icon">⚙️</div>
-            <span>Settings</span>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    <label>FPS Limiter:</label>
+    <select id="fpsLimit">
+        <option value="30">30 FPS</option>
+        <option value="60" selected>60 FPS</option>
+        <option value="120">120 FPS (Uncapped)</option>
+    </select>
+    
+    <button onclick="closeSettings()">Close</button>
+</div>
