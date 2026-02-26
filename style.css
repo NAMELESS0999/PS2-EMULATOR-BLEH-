@@ -1,0 +1,40 @@
+body {
+    background: #121212;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.game-list {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    width: 200px;
+    height: 200px;
+    border: 5px solid transparent;
+    border-radius: 15px;
+    transition: 0.3s;
+    cursor: pointer;
+    background: #333;
+}
+
+.card:hover {
+    transform: scale(1.1);
+    border-color: #00d4ff;
+    box-shadow: 0 0 30px #00d4ff;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
