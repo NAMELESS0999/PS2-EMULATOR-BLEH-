@@ -1,88 +1,60 @@
+/* 1. Theme Variables */
 :root {
-    --switch-blue: #00d4ff;
-    --bg-dark: #1f1f1f;
+    --bg: #1f1f1f;
+    --text: white;
+    --card-size: 15vw; /* Card size based on screen width */
+    --accent: #00d4ff;
+}
+
+/* Light Mode Override */
+[data-theme="light"] {
+    --bg: #ebebeb;
+    --text: #333;
+    --accent: #e60012; /* Switch Red */
 }
 
 body {
-    background-color: var(--bg-dark);
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
     margin: 0;
-    overflow: hidden;
-}
-
-/* Profile Icon at Top Left */
-.top-bar {
-    padding: 20px 50px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    height: 100vh;
 }
 
-.profile-icon {
-    width: 40px;
-    height: 40px;
-    background: #ff4500;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-/* Horizontal Carousel */
+/* 2. Responsive Game List */
 .carousel-container {
-    width: 100%;
+    display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory; /* The "Locking" effect */
-    display: flex;
+    scroll-snap-type: x mandatory; /* Cards snap into place */
+    padding: 50px;
+    gap: 20px;
     align-items: center;
-    height: 350px;
-    padding: 0 50px;
-}
-
-.game-list {
-    display: flex;
-    gap: 15px;
 }
 
 .card {
-    flex: 0 0 250px; /* Width of each square */
-    height: 250px;
+    flex: 0 0 var(--card-size);
+    aspect-ratio: 1 / 1;
     background: #333;
+    scroll-snap-align: center;
     border: 4px solid transparent;
-    scroll-snap-align: center; /* Snap to center */
-    transition: 0.2s;
-    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
 .card:hover {
-    border-color: var(--switch-blue);
-    transform: translateY(-10px);
+    transform: scale(1.1);
+    border-color: var(--accent);
 }
 
-/* Bottom System Bar */
-.system-menu {
+/* 3. Settings Modal */
+.modal {
+    display: none; 
     position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 40px;
-}
-
-.sys-item {
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.sys-item:hover { color: var(--switch-blue); }
-
-.icon {
-    font-size: 30px;
-    background: #333;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 20px;
+    z-index: 100;
 }
