@@ -1,40 +1,24 @@
-// 1. Fill the Carousel
-const games = [
-    { name: "God of War", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
-    { name: "Jak & Daxter", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
-];
-
-const container = document.getElementById('gameList');
-
-// Add real games
-games.forEach(game => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<img src="${game.img}" style="width:100%; height:100%; object-fit:cover;">`;
-    container.appendChild(card);
-});
-
-// Add 10 empty "Empty Slots" for the sliding effect
-for (let i = 0; i < 10; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'card';
-    empty.style.opacity = "0.3";
-    container.appendChild(empty);
+// 1. Theme Toggle
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const target = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', target);
 }
 
-// 2. Controller Configuration (The Logic)
-function showControllerConfig() {
-    // This uses the Gamepad API
-    const gamepads = navigator.getGamepads();
-    if (gamepads[0]) {
-        alert("Controller Detected: " + gamepads[0].id);
-    } else {
-        alert("No controller detected. Plug one in and press a button!");
-    }
+// 2. Resolution/Scale Adjuster
+function updateResolution(val) {
+    // This updates the CSS variable we made earlier
+    document.documentElement.style.setProperty('--card-size', val);
 }
 
-// 3. Simple Clock
-setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}, 1000);
+// 3. FPS Limiter Logic (Placeholder for Emulator Core)
+let fps = 60;
+document.getElementById('fpsLimit').onchange = (e) => {
+    fps = parseInt(e.target.value);
+    console.log(`System: FPS limited to ${fps}`);
+    // In a real emulator, you'd pass this value to the Wasm loop
+};
+
+// 4. Modal Controls
+function showSettings() { document.getElementById('settingsModal').style.display = 'block'; }
+function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
