@@ -1,112 +1,77 @@
-/**
- * JS CONSOLE CORE ENGINE
- * Purpose: Handle Switch-like UI interactions and system settings
- */
+// CONSOLE SYSTEM CORE
+const ConsoleApp = {
+    currentIndex: 0,
+    games: [
+        { id: 1, title: "God of War II", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
+        { id: 2, title: "Jak and Daxter", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
+        { id: 3, title: "Ratchet & Clank", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
+    ],
 
-// 1. SYSTEM STATE
-const state = {
-    activeGame: 0,
-    isMenuOpen: false,
-    theme: 'dark',
-    fps: 60
+    init() {
+        this.renderGames();
+        this.startClock();
+        this.bindEvents();
+    },
+
+    renderGames() {
+        const rail = document.getElementById('game-rail');
+        this.games.forEach((game, i) => {
+            const card = document.createElement('div');
+            card.className = `game-card ${i === 0 ? 'active' : ''}`;
+            card.innerHTML = `<img src="${game.img}" alt="${game.title}">`;
+            card.onclick = () => alert("Booting " + game.title);
+            rail.appendChild(card);
+        });
+
+        // Add dummy slots for sliding
+        for(let i=0; i<8; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'game-card';
+            empty.style.opacity = "0.2";
+            rail.appendChild(empty);
+        }
+    },
+
+    bindEvents() {
+        window.addEventListener('keydown', (e) => {
+            if(e.key === "ArrowRight") this.moveSelection(1);
+            if(e.key === "ArrowLeft") this.moveSelection(-1);
+            if(e.key === "Enter") alert("System: Initializing Emulator Core...");
+        });
+    },
+
+    moveSelection(dir) {
+        const cards = document.querySelectorAll('.game-card');
+        cards[this.currentIndex].classList.remove('active');
+        this.currentIndex = Math.max(0, Math.min(this.currentIndex + dir, this.games.length - 1));
+        cards[this.currentIndex].classList.add('active');
+        cards[this.currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        document.getElementById('game-title').innerText = this.games[this.currentIndex].title;
+    },
+
+    startClock() {
+        const clock = document.getElementById('digital-clock');
+        setInterval(() => {
+            clock.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }, 1000);
+    }
 };
 
-// 2. GAME LIBRARY DATA
-const gameLibrary = [
-    { id: 1, title: "God of War II", cover: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
-    { id: 2, title: "Jak 3", cover: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
-    { id: 3, title: "Ratchet: Deadlocked", cover: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
-    { id: 4, title: "Sly 2: Band of Thieves", cover: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
-];
+// UI CONTROLS
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeAllModals() { document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none'); }
 
-// 3. INITIALIZATION
-function initConsole() {
-    const container = document.getElementById('game-container');
-    
-    // Inject games + 5 empty slots
-    gameLibrary.forEach((game, index) => {
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        if(index === 0) card.classList.add('focused');
-        card.innerHTML = `<img src="${game.cover}" alt="${game.title}">`;
-        card.onclick = () => bootGame(game.title);
-        container.appendChild(card);
-    });
-
-    for(let i=0; i<6; i++) {
-        const empty = document.createElement('div');
-        empty.className = 'game-card';
-        empty.style.opacity = "0.2";
-        container.appendChild(empty);
-    }
-
-    startClock();
-    initKeyHandlers();
+function uiThemeToggle() {
+    const b = document.body;
+    b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 }
 
-// 4. UI LOGIC FUNCTIONS
-function toggleTheme() {
-    state.theme = (state.theme === 'dark') ? 'light' : 'dark';
-    document.body.setAttribute('data-theme', state.theme);
+function uiScaleUpdate(val) {
+    document.documentElement.style.setProperty('--ui-zoom', val);
 }
 
-function rescaleUI(value) {
-    document.documentElement.style.setProperty('--zoom', value);
+function uiFpsUpdate(val) {
+    document.getElementById('fps-display').innerText = val + " FPS";
 }
 
-function limitFPS(value) {
-    state.fps = value;
-    document.getElementById('fps-counter').innerText = value + " FPS";
-}
-
-function openMenu(id) {
-    state.isMenuOpen = true;
-    document.getElementById(id).style.display = 'flex';
-}
-
-function closeMenus() {
-    state.isMenuOpen = false;
-    const overlays = document.querySelectorAll('.overlay');
-    overlays.forEach(o => o.style.display = 'none');
-}
-
-// 5. KEYBOARD NAVIGATION ENGINE
-function initKeyHandlers() {
-    window.addEventListener('keydown', (e) => {
-        if(state.isMenuOpen) {
-            if(e.key === "Escape" || e.key === "b") closeMenus();
-            return;
-        }
-
-        const cards = document.querySelectorAll('.game-card');
-        cards[state.activeGame].classList.remove('focused');
-
-        if(e.key === "ArrowRight" && state.activeGame < cards.length - 1) {
-            state.activeGame++;
-        } else if(e.key === "ArrowLeft" && state.activeGame > 0) {
-            state.activeGame--;
-        } else if(e.key === "Enter") {
-            bootGame(gameLibrary[state.activeGame]?.title || "Empty Slot");
-        }
-
-        cards[state.activeGame].classList.add('focused');
-        cards[state.activeGame].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        
-        // Update selection title
-        document.getElementById('active-title').innerText = gameLibrary[state.activeGame]?.title || "System Slot";
-    });
-}
-
-function bootGame(title) {
-    alert("🚀 BOOTING SYSTEM: Initializing Play! Wasm Core for " + title);
-}
-
-function startClock() {
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('clock-display').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }, 1000);
-}
-
-// Start the console
-initConsole();
+ConsoleApp.init();
