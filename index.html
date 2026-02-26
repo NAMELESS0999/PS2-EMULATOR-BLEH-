@@ -1,22 +1,58 @@
-<div id="settingsModal" class="modal">
-    <h2>System Settings</h2>
-    
-    <label>Theme:</label>
-    <button onclick="toggleTheme()">Toggle Light/Dark</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Console Pro</title>
+    <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@latest/coi-serviceworker.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
 
-    <label>Resolution (UI Scale):</label>
-    <select onchange="updateResolution(this.value)">
-        <option value="12vw">Small (Compact)</option>
-        <option value="15vw" selected>Medium (Standard)</option>
-        <option value="20vw">Large (TV Mode)</option>
-    </select>
+    <div class="top-bar">
+        <div class="user-section">
+            <div class="profile-pic" id="profileBtn"></div>
+            <span id="userName">Player 1</span>
+        </div>
+        <div class="system-status">
+            <span id="fpsDisplay">60 FPS</span>
+            <span id="clock">12:00 PM</span>
+        </div>
+    </div>
 
-    <label>FPS Limiter:</label>
-    <select id="fpsLimit">
-        <option value="30">30 FPS</option>
-        <option value="60" selected>60 FPS</option>
-        <option value="120">120 FPS (Uncapped)</option>
-    </select>
-    
-    <button onclick="closeSettings()">Close</button>
-</div>
+    <div class="main-container">
+        <div class="game-carousel" id="gameList">
+            </div>
+    </div>
+
+    <div class="bottom-bar">
+        <button class="icon-btn" onclick="toggleModal('newsModal')">📰<span>News</span></button>
+        <button class="icon-btn" onclick="toggleModal('controllerModal')">🎮<span>Controllers</span></button>
+        <button class="icon-btn" onclick="toggleModal('settingsModal')">⚙️<span>Settings</span></button>
+    </div>
+
+    <div id="newsModal" class="modal"><div class="modal-content">
+        <h2>Latest Gaming News</h2>
+        <div id="newsFeed">Loading news...</div>
+        <button onclick="toggleModal('newsModal')">Close</button>
+    </div></div>
+
+    <div id="settingsModal" class="modal"><div class="modal-content">
+        <h2>System Settings</h2>
+        <label>Theme: <button onclick="changeTheme()">Switch Light/Dark</button></label>
+        <label>UI Scale (Resolution): 
+            <input type="range" min="50" max="150" value="100" oninput="adjustScale(this.value)">
+        </label>
+        <label>FPS Limit: 
+            <select onchange="setFPS(this.value)">
+                <option value="30">30 FPS (Power Save)</option>
+                <option value="60" selected>60 FPS (Smooth)</option>
+                <option value="0">Uncapped</option>
+            </select>
+        </label>
+        <button onclick="toggleModal('settingsModal')">Save & Close</button>
+    </div></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
