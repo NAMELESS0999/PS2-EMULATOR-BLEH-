@@ -50,3 +50,45 @@ body {
 .news-item { display: flex; gap: 15px; background: var(--surface); padding: 15px; margin-bottom: 10px; border-radius: 10px; transition: 0.2s; cursor: pointer; }
 .news-item:hover { background: rgba(255,255,255,0.1); transform: translateX(10px); }
 .news-item img { width: 70px; height: 70px; border-radius: 5px; object-fit: cover; }
+/* 1. Center the Game Row on the screen */
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh; /* Pushes the games to the middle */
+    padding: 100px 0;
+}
+
+/* 2. Make the Game Icons fill the boxes */
+.game-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This makes the box art fill the square */
+    border-radius: 10px;
+}
+
+/* 3. Style your new Footer PNGs */
+.menu-icon-img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
+    transition: transform 0.2s;
+}
+
+.nav-item:hover .menu-icon-img {
+    transform: scale(1.2); /* Makes icons pop when you hover */
+}
+
+/* 4. Full-Page News Mode (Nintendo Switch Style) */
+#news-view.active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0b0b0b;
+    z-index: 9999;
+    padding: 60px;
+    overflow-y: auto;
+    display: block !important;
+}
