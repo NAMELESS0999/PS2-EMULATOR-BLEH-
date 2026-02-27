@@ -8,11 +8,22 @@
 </head>
 <body>
 
+    <div id="login-screen" class="overlay active" style="z-index: 9999; background: var(--bg);">
+        <div class="login-box">
+            <div class="avatar" id="login-avatar" style="width: 100px; height: 100px; margin: 0 auto 20px;"></div>
+            <h2>Who is playing?</h2>
+            <input type="text" id="username-input" placeholder="Username" class="focusable">
+            <input type="password" id="password-input" placeholder="Password" class="focusable">
+            <button onclick="handleLogin()" class="focusable">Log In / Create Profile</button>
+            <p id="login-error" style="color: #ff4e50; display: none;">Incorrect Password!</p>
+        </div>
+    </div>
+
     <div id="master-ui">
         <nav class="top-nav">
-            <div class="user-profile" onclick="openPfpMenu()">
-                <div class="avatar" id="main-avatar" style="background-image: url('pfp/goodmanpfp.jpg');"></div>
-                <span class="username">Player 1</span>
+            <div class="user-profile focusable" onclick="openPfpMenu()">
+                <div class="avatar" id="main-avatar"></div>
+                <span class="username" id="display-username">Player 1</span>
             </div>
             <div class="system-stats">
                 <span id="clock">00:00 AM</span>
@@ -29,21 +40,21 @@
 
         <footer class="system-footer">
             <div class="nav-row">
-                <div class="nav-item" onclick="openNews()">
+                <div class="nav-item focusable" onclick="openNews()">
                     <img src="icons/News.png" alt="News">
                     <span>News</span>
                 </div>
-                <div class="nav-item" onclick="openMenu('ctrl-view')">
+                <div class="nav-item focusable" onclick="openMenu('ctrl-view')">
                     <img src="icons/Controller.png" alt="Controllers">
                     <span>Controllers</span>
                 </div>
-                <div class="nav-item" onclick="openMenu('settings-view')">
+                <div class="nav-item focusable" onclick="openMenu('settings-view')">
                     <img src="icons/Settings.png" alt="Settings">
                     <span>Settings</span>
                 </div>
-                <div class="nav-item" onclick="location.reload()">
+                <div class="nav-item focusable" onclick="handleLogout()">
                     <img src="icons/Power.png" alt="Power">
-                    <span>Power</span>
+                    <span>Log Out</span>
                 </div>
             </div>
         </footer>
@@ -53,16 +64,16 @@
         <div class="modal-card">
             <h2>Select Profile Icon</h2>
             <div id="pfp-grid" class="pfp-grid"></div>
-            <button onclick="closeMenu('pfp-modal')" class="back-btn">Back</button>
+            <button onclick="closeMenu('pfp-modal')" class="back-btn focusable">Back</button>
         </div>
     </div>
 
     <div id="news-view" class="overlay">
         <div class="modal-card full-page">
-            <h2>Gaming Pulse</h2>
-            <p class="subtitle">Latest updates from around the globe</p>
-            <div id="news-grid" class="news-grid"></div>
-            <button onclick="closeMenu('news-view')" class="back-btn">Back</button>
+            <h2>Gaming Pulse (LIVE)</h2>
+            <p class="subtitle">Real-time updates from the gaming world</p>
+            <div id="news-grid" class="news-grid"><p>Loading live feed...</p></div>
+            <button onclick="closeMenu('news-view')" class="back-btn focusable">Back</button>
         </div>
     </div>
 
@@ -71,13 +82,12 @@
             <h2>Bluetooth Devices</h2>
             <div class="device-list">
                 <div class="device-item sync-pulse">Searching for nearby devices...</div>
-                <div class="device-item">DualShock 4 <span class="status-badge">Paired</span></div>
-                <div class="device-item">Xbox Wireless Controller <span class="status-badge off">Offline</span></div>
+                <div class="device-item" id="active-gamepad">No Gamepad Detected <span class="status-badge off">Offline</span></div>
             </div>
             <div class="help-section">
-                <button onclick="showBtHelp()" class="help-btn">How to Pair Devices</button>
+                <button onclick="alert('Move analog stick or D-pad to navigate. Press bottom face button (A/Cross) to select.')" class="help-btn focusable">Controller Tutorial</button>
             </div>
-            <button onclick="closeMenu('ctrl-view')" class="back-btn">Back</button>
+            <button onclick="closeMenu('ctrl-view')" class="back-btn focusable">Back</button>
         </div>
     </div>
 
@@ -87,20 +97,20 @@
             <div class="setting-item">
                 <p>Display Theme</p>
                 <div class="button-group">
-                    <button onclick="toggleTheme('dark')">Dark</button>
-                    <button onclick="toggleTheme('light')">Light</button>
+                    <button onclick="toggleTheme('dark')" class="focusable">Dark</button>
+                    <button onclick="toggleTheme('light')" class="focusable">Light</button>
                 </div>
             </div>
             <div class="setting-item">
                 <p>Frame Rate Target</p>
                 <div class="button-group">
-                    <button onclick="setFPS(30)">30 FPS</button>
-                    <button onclick="setFPS(60)">60 FPS</button>
-                    <button onclick="setFPS(120)">120 FPS</button>
-                    <button onclick="setFPS(160)">MAX</button>
+                    <button onclick="setFPS(30)" class="focusable">30 FPS</button>
+                    <button onclick="setFPS(60)" class="focusable">60 FPS</button>
+                    <button onclick="setFPS(120)" class="focusable">120 FPS</button>
+                    <button onclick="setFPS(160)" class="focusable">MAX</button>
                 </div>
             </div>
-            <button onclick="closeMenu('settings-view')" class="back-btn">Back</button>
+            <button onclick="closeMenu('settings-view')" class="back-btn focusable">Back</button>
         </div>
     </div>
 
