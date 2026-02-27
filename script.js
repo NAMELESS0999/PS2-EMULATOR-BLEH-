@@ -1,111 +1,58 @@
-// CONSOLE SYSTEM CORE
-const UI = {
-    index: 0,
-    games: [
-        { name: "God of War II", img: "https://via.placeholder.com/300x400/222/fff?text=GOW+II" },
-        { name: "Jak 3", img: "https://via.placeholder.com/300x400/222/fff?text=Jak+3" },
-        { name: "Ratchet & Clank", img: "https://via.placeholder.com/300x400/222/fff?text=R+and+C" },
-        { name: "Sly Cooper", img: "https://via.placeholder.com/300x400/222/fff?text=Sly+Cooper" },
-        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" },
-        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" },
-        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" }
-    ],
-    start() {
-        this.render();
-        this.listen();
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
-    },
+const games = [
+    { name: "God of War II", img: "" },
+    { name: "Jak 3", img: "" },
+    { name: "Ratchet & Clank", img: "" },
+    { name: "Sly Cooper", img: "" }
+];
 
-    render() {
-        const strip = document.getElementById('game-strip');
-        strip.innerHTML = this.games.map((g, i) => `
-            <div class="game-card ${i === 0 ? 'active' : ''}">
-                <img src="${g.img}">
-            </div>
-        `).join('');
-    },
-
-    move(dir) {
-        const cards = document.querySelectorAll('.game-card');
-        cards[this.index].classList.remove('active');
-        this.index = Math.max(0, Math.min(this.index + dir, this.games.length - 1));
-        cards[this.index].classList.add('active');
-        document.getElementById('game-title-display').innerText = this.games[this.index].name;
-        cards[this.index].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-    },
-
-    listen() {
-        window.addEventListener('keydown', (e) => {
-            if(e.key === "ArrowRight") this.move(1);
-            if(e.key === "ArrowLeft") this.move(-1);
-        });
-    }
-};
-
-function openMenu(viewId) {
-    document.getElementById('overlay-layer').classList.add('overlay-show');
-    document.querySelectorAll('.menu-view').forEach(v => v.style.display = 'none');
-    document.getElementById(viewId).style.display = 'block';
-    if(viewId === 'news-view') loadIGDBNews();
-}
-
-function closeMenu() {
-    document.getElementById('overlay-layer').classList.remove('overlay-show');
-}
-
-async function loadIGDBNews() {
-    const feed = document.getElementById('news-feed');
-    try {
-        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=https://www.gamespot.com/feeds/news/");
-        const data = await res.json();
-        feed.innerHTML = data.items.slice(0, 5).map(item => `
-            <div class="news-item" onclick="window.open('${item.link}')">
-                <img src="${item.thumbnail}">
-                <div>
-                    <h4 style="margin:0">${item.title}</h4>
-                    <p style="margin:5px 0 0; font-size:12px; color:cyan;">Global Gaming Update</p>
-                </div>
-            </div>
-        `).join('');
-    } catch (e) { feed.innerHTML = "System Offline."; }
-}
-
-function adjustScale(val) {
-    document.getElementById('master-ui').style.transform = `scale(${val})`;
-}
-
-UI.start();
-// List of your imported pfp files from your GitHub screenshot
-const pfpList = [
+// Exact filenames from your GitHub /pfp/ folder
+const pfpImages = [
     'kratospfp.jpg', 'spidermanpfp.jpg', 'gtacarlpfp.jpg', 'mariopfp.jpg', 
     'sonicpfp.jpg', 'johnwickpfp.jpg', 'shrekpfp.jpg', 'pacmanpfp.jpg',
     'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg'
 ];
 
+function init() {
+    const strip = document.getElementById('game-strip');
+    games.forEach((game, index) => {
+        const card = document.createElement('div');
+        card.className = `game-card ${index === 0 ? 'active' : ''}`;
+        card.innerHTML = `<img src="${game.img || 'https://via.placeholder.com/300?text=PS2'}" alt="${game.name}">`;
+        card.onclick = () => {
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            document.getElementById('game-title-display').innerText = game.name;
+        };
+        strip.appendChild(card);
+    });
+    updateClock();
+    setInterval(updateClock, 1000);
+}
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// PFP Logic
 function openPfpMenu() {
     const grid = document.getElementById('pfp-grid');
-    grid.innerHTML = ''; // Clear old list
-    
-    pfpList.forEach(imgName => {
+    grid.innerHTML = '';
+    pfpImages.forEach(imgName => {
         const img = document.createElement('img');
         img.src = `pfp/${imgName}`;
         img.className = 'pfp-option';
-        img.onclick = () => selectPfp(imgName);
+        img.onclick = () => {
+            document.getElementById('main-avatar').style.backgroundImage = `url('pfp/${imgName}')`;
+            closePfpMenu();
+        };
         grid.appendChild(img);
     });
-
     document.getElementById('pfp-modal').classList.add('overlay-show');
 }
 
-function selectPfp(imgName) {
-    // Update the main avatar on the dashboard
-    document.querySelector('.avatar').style.backgroundImage = `url('pfp/${imgName}')`;
-    document.querySelector('.avatar').style.backgroundSize = 'cover';
-    closePfpMenu();
-}
+function closePfpMenu() { document.getElementById('pfp-modal').classList.remove('overlay-show'); }
+function openMenu(id) { document.getElementById(id).classList.add('overlay-show'); }
+function closeMenu(id) { document.getElementById(id).classList.remove('overlay-show'); }
 
-function closePfpMenu() {
-    document.getElementById('pfp-modal').classList.remove('overlay-show');
-}
+window.onload = init;
