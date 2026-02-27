@@ -3,99 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Console | Ultimate UI</title>
+    <title>JS Console | Ultimate Edition</title>
     <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@latest/coi-serviceworker.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body data-theme="dark">
 
-    <div id="master-container">
-        <header class="system-bar">
-            <div class="profile-section" id="profile-trigger">
-                <div class="avatar-glow">
-                    <div class="avatar-main"></div>
-                </div>
-                <span class="profile-name">Player 1</span>
+    <div id="ui-wrapper">
+        <header class="top-nav">
+            <div class="profile-group">
+                <div class="user-avatar"></div>
+                <span class="user-id">Player 1</span>
             </div>
-            <div class="system-stats">
-                <div class="stat-item"><span id="live-fps">60</span> FPS</div>
-                <div class="stat-item">📶</div>
-                <div class="stat-item">88% 🔋</div>
-                <div class="stat-item" id="system-time">00:00</div>
+            <div class="sys-meta">
+                <span id="fps-counter">60 FPS</span>
+                <span class="sys-icon">📶</span>
+                <span class="sys-icon">88% 🔋</span>
+                <span id="clock-txt">00:00</span>
             </div>
         </header>
 
-        <main class="viewport">
-            <h2 class="selection-header" id="current-title">Select Software</h2>
-            <div class="carousel-wrapper">
-                <div class="game-rail" id="main-rail">
+        <main class="main-stage">
+            <h1 id="selection-name">Select Software</h1>
+            <div class="carousel-box">
+                <div class="game-strip" id="game-strip">
                     </div>
             </div>
         </main>
 
-        <footer class="system-footer">
-            <div class="action-row">
-                <div class="icon-group" onclick="openNavMenu('news-view')">
-                    <div class="circle-btn">📰</div>
+        <footer class="bottom-nav">
+            <div class="btn-row">
+                <button class="sys-btn" onclick="uiAction('news')">
+                    <div class="btn-ico">📰</div>
                     <span>News</span>
-                </div>
-                <div class="icon-group" onclick="openNavMenu('controller-view')">
-                    <div class="circle-btn">🎮</div>
+                </button>
+                <button class="sys-btn" onclick="uiAction('ctrl')">
+                    <div class="btn-ico">🎮</div>
                     <span>Controllers</span>
-                </div>
-                <div class="icon-group" onclick="openNavMenu('settings-view')">
-                    <div class="circle-btn">⚙️</div>
+                </button>
+                <button class="sys-btn" onclick="uiAction('set')">
+                    <div class="btn-ico">⚙️</div>
                     <span>Settings</span>
-                </div>
-                <div class="icon-group" onclick="location.reload()">
-                    <div class="circle-btn">⭕</div>
+                </button>
+                <button class="sys-btn" onclick="location.reload()">
+                    <div class="btn-ico">⭕</div>
                     <span>Power</span>
-                </div>
+                </button>
             </div>
-            <div class="legend">
-                <span class="key-hint"><b>A</b> OK</span>
-                <span class="key-hint"><b>B</b> Back</span>
+            <div class="ui-hints">
+                <span><b>A</b> OK</span>
+                <span><b>B</b> Back</span>
             </div>
         </footer>
 
-        <section class="modal-layer" id="modal-overlay">
-            
-            <div class="modal-content-wrapper" id="settings-view">
-                <div class="modal-header">
-                    <h3>System Settings</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="config-row">
-                        <label>Screen Theme</label>
-                        <button class="toggle-switch" onclick="toggleSystemTheme()">Toggle Light/Dark</button>
+        <div id="modal-overlay" class="overlay-hide" onclick="closeModals()">
+            <div class="modal-box" onclick="event.stopPropagation()">
+                
+                <div id="view-set" class="view-hide">
+                    <h2>System Settings</h2>
+                    <div class="set-row">
+                        <p>Display Theme</p>
+                        <button class="toggle" onclick="swapTheme()">Swap Dark/Light</button>
                     </div>
-                    <div class="config-row">
-                        <label>UI Magnification</label>
-                        <input type="range" min="0.5" max="1.8" step="0.01" value="1" oninput="updateUIScale(this.value)">
+                    <div class="set-row">
+                        <p>UI Scaling (Monitor Fit)</p>
+                        <input type="range" min="0.5" max="2" step="0.05" value="1" oninput="rescaleUI(this.value)">
                     </div>
-                    <div class="config-row">
-                        <label>Frame Limit</label>
-                        <select onchange="updateFPSCap(this.value)">
+                    <div class="set-row">
+                        <p>Frame Rate Limit</p>
+                        <select onchange="updateFPS(this.value)">
                             <option value="30">30 FPS</option>
                             <option value="60" selected>60 FPS</option>
                             <option value="120">144 FPS</option>
                         </select>
                     </div>
                 </div>
-                <button class="modal-btn-close" onclick="closeNavMenu()">Apply & Return</button>
-            </div>
 
-            <div class="modal-content-wrapper" id="controller-view">
-                <h3>Controllers</h3>
-                <div class="controller-status">
-                    <p>Searching for input device...</p>
-                    <div class="controller-img">🎮</div>
+                <div id="view-ctrl" class="view-hide">
+                    <h2>Controllers</h2>
+                    <p>Searching for Bluetooth/USB devices...</p>
+                    <div class="ctrl-visual">🎮</div>
                 </div>
-                <button class="modal-btn-close" onclick="closeNavMenu()">Close</button>
-            </div>
 
-        </section>
+                <button class="close-trigger" onclick="closeModals()">Back</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
