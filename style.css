@@ -133,3 +133,47 @@ body {
     display: flex;
     gap: 25px;
 }
+/* Centers the entire Bottom Menu */
+.system-footer {
+    position: fixed;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
+
+.nav-row {
+    display: flex;
+    gap: 35px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Styles your circular PNGs */
+.nav-item img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+    transition: transform 0.2s;
+}
+
+.nav-item:hover img {
+    transform: scale(1.1);
+}
+
+/* Centers the Games in the middle of the screen */
+.carousel-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
