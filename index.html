@@ -3,103 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Console | Ultimate Edition</title>
-    <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@latest/coi-serviceworker.min.js"></script>
+    <title>Ultimate Console UI</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="dark">
-
-    <div id="ui-wrapper">
+<body>
+    <div id="master-ui">
         <header class="top-nav">
-            <div class="profile-group">
-                <div class="user-avatar"></div>
-                <span class="user-id">Player 1</span>
+            <div class="user-profile">
+                <div class="avatar"></div>
+                <span>Player 1</span>
             </div>
-            <div class="sys-meta">
-                <span id="fps-counter">60 FPS</span>
-                <span class="sys-icon">📶</span>
-                <span class="sys-icon">88% 🔋</span>
-                <span id="clock-txt">00:00</span>
+            <div class="status-group">
+                <span id="clock">00:00</span>
+                <span>📶 88% 🔋</span>
             </div>
         </header>
 
-        <main class="main-stage">
-            <h1 id="selection-name">Select Software</h1>
-            <div class="carousel-box">
-                <div class="game-strip" id="game-strip">
+        <main class="stage">
+            <h1 id="game-title-display">Select Software</h1>
+            <div class="carousel-container">
+                <div id="game-strip">
                     </div>
             </div>
         </main>
 
         <footer class="bottom-nav">
-            <div class="btn-row">
-                <button class="sys-btn" onclick="uiAction('news')">
-                    <div class="btn-ico">📰</div>
+            <div class="nav-icons">
+                <div class="nav-item" onclick="openMenu('news-view')">
+                    <div class="icon-circle">📰</div>
                     <span>News</span>
-                </button>
-                <button class="sys-btn" onclick="uiAction('ctrl')">
-                    <div class="btn-ico">🎮</div>
-                    <span>Controllers</span>
-                </button>
-                <button class="sys-btn" onclick="uiAction('set')">
-                    <div class="btn-ico">⚙️</div>
+                </div>
+                <div class="nav-item" onclick="openMenu('settings-view')">
+                    <div class="icon-circle">⚙️</div>
                     <span>Settings</span>
-                </button>
-                <button class="sys-btn" onclick="location.reload()">
-                    <div class="btn-ico">⭕</div>
+                </div>
+                <div class="nav-item" onclick="location.reload()">
+                    <div class="icon-circle">⭕</div>
                     <span>Power</span>
-                </button>
-            </div>
-            <div class="ui-hints">
-                <span><b>A</b> OK</span>
-                <span><b>B</b> Back</span>
+                </div>
             </div>
         </footer>
 
-        <div id="modal-overlay" class="overlay-hide" onclick="closeModals()">
-            <div class="modal-box" onclick="event.stopPropagation()">
+        <div id="overlay-layer" class="overlay-hide" onclick="closeMenu()">
+            <div class="modal-card" onclick="event.stopPropagation()">
                 
-                <div id="view-set" class="view-hide">
+                <div id="news-view" class="menu-view">
+                    <h2>Gaming Pulse</h2>
+                    <p class="subtitle">Latest updates from IGDB & Industry Sources</p>
+                    <hr>
+                    <div id="news-feed">
+                        <div class="loading-pulse">Syncing with servers...</div>
+                    </div>
+                </div>
+
+                <div id="settings-view" class="menu-view">
                     <h2>System Settings</h2>
-                    <div class="set-row">
-                        <p>Display Theme</p>
-                        <button class="toggle" onclick="swapTheme()">Swap Dark/Light</button>
-                    </div>
-                    <div class="set-row">
-                        <p>UI Scaling (Monitor Fit)</p>
-                        <input type="range" min="0.5" max="2" step="0.05" value="1" oninput="rescaleUI(this.value)">
-                    </div>
-                    <div class="set-row">
-                        <p>Frame Rate Limit</p>
-                        <select onchange="updateFPS(this.value)">
-                            <option value="30">30 FPS</option>
-                            <option value="60" selected>60 FPS</option>
-                            <option value="120">144 FPS</option>
-                        </select>
+                    <div class="setting-row">
+                        <span>UI Scale</span>
+                        <input type="range" min="0.5" max="1.5" step="0.1" value="1" oninput="adjustScale(this.value)">
                     </div>
                 </div>
 
-                <div id="view-ctrl" class="view-hide">
-                    <h2>Controllers</h2>
-                    <p>Searching for Bluetooth/USB devices...</p>
-                    <div class="ctrl-visual">🎮</div>
-                </div>
-
-                <button class="close-trigger" onclick="closeModals()">Back</button>
+                <button class="back-btn" onclick="closeMenu()">Back</button>
             </div>
         </div>
     </div>
-<div class="modal-content-wrapper" id="news-view">
-            <div class="modal-header">
-                <h2 style="color: var(--accent); margin: 0;">Industry Pulse</h2>
-                <p style="font-size: 0.8rem; opacity: 0.5;">Global Gaming News</p>
-            </div>
-            <div id="news-list-container" style="max-height: 400px; overflow-y: auto; margin-top: 20px;">
-                <p>Initialising News Feed...</p>
-            </div>
-            <button class="modal-btn-close" onclick="closeNavMenu()">Return</button>
-        </div>
 
-    </div> <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
