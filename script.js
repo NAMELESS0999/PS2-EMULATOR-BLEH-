@@ -1,82 +1,76 @@
 // CONSOLE SYSTEM CORE
-const Console = {
-    currentIndex: 0,
+const UI = {
+    index: 0,
     games: [
-        { title: "God of War II", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
-        { title: "Jak and Daxter", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
-        { title: "Ratchet & Clank", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
+        { name: "God of War II", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
+        { name: "Jak 3", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
+        { name: "Ratchet & Clank", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
     ],
 
-    init() {
-        this.renderCarousel();
-        this.updateClock();
-        window.addEventListener('keydown', (e) => {
-            if(e.key === "ArrowRight") this.move(1);
-            if(e.key === "ArrowLeft") this.move(-1);
-        });
+    start() {
+        this.render();
+        this.listen();
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
     },
 
-    renderCarousel() {
-        const rail = document.getElementById('main-rail');
-        if(!rail) return;
-        rail.innerHTML = '';
-        this.games.forEach((game, i) => {
-            const card = document.createElement('div');
-            card.className = `game-card ${i === 0 ? 'active' : ''}`;
-            card.innerHTML = `<img src="${game.img}" alt="${game.title}">`;
-            rail.appendChild(card);
-        });
+    render() {
+        const strip = document.getElementById('game-strip');
+        strip.innerHTML = this.games.map((g, i) => `
+            <div class="game-card ${i === 0 ? 'active' : ''}">
+                <img src="${g.img}">
+            </div>
+        `).join('');
     },
 
     move(dir) {
         const cards = document.querySelectorAll('.game-card');
-        cards[this.currentIndex].classList.remove('active');
-        this.currentIndex = Math.max(0, Math.min(this.currentIndex + dir, this.games.length - 1));
-        cards[this.currentIndex].classList.add('active');
-        cards[this.currentIndex].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        cards[this.index].classList.remove('active');
+        this.index = Math.max(0, Math.min(this.index + dir, this.games.length - 1));
+        cards[this.index].classList.add('active');
+        document.getElementById('game-title-display').innerText = this.games[this.index].name;
+        cards[this.index].scrollIntoView({ behavior: 'smooth', inline: 'center' });
     },
 
-    updateClock() {
-        setInterval(() => {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            if(document.getElementById('system-time')) document.getElementById('system-time').innerText = time;
-        }, 1000);
+    listen() {
+        window.addEventListener('keydown', (e) => {
+            if(e.key === "ArrowRight") this.move(1);
+            if(e.key === "ArrowLeft") this.move(-1);
+        });
     }
 };
 
-// MODAL & NEWS LOGIC
-function openNavMenu(menuId) {
-    const overlay = document.getElementById('modal-overlay');
-    const content = document.getElementById(menuId);
-    if(overlay && content) {
-        overlay.classList.add('show');
-        content.classList.add('active');
-        if(menuId === 'news-view') loadGlobalNews();
-    }
+function openMenu(viewId) {
+    document.getElementById('overlay-layer').classList.add('overlay-show');
+    document.querySelectorAll('.menu-view').forEach(v => v.style.display = 'none');
+    document.getElementById(viewId).style.display = 'block';
+    if(viewId === 'news-view') loadIGDBNews();
 }
 
-function closeNavMenu() {
-    document.getElementById('modal-overlay').classList.remove('show');
-    document.querySelectorAll('.modal-content-wrapper').forEach(m => m.classList.remove('active'));
+function closeMenu() {
+    document.getElementById('overlay-layer').classList.remove('overlay-show');
 }
 
-async function loadGlobalNews() {
-    const container = document.getElementById('news-list-container');
-    const feed = "https://api.rss2json.com/v1/api.json?rss_url=https://www.gamespot.com/feeds/news/";
+async function loadIGDBNews() {
+    const feed = document.getElementById('news-feed');
     try {
-        const res = await fetch(feed);
+        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=https://www.gamespot.com/feeds/news/");
         const data = await res.json();
-        container.innerHTML = data.items.slice(0, 10).map(item => `
-            <div style="display:flex; gap:15px; background:rgba(255,255,255,0.05); padding:10px; margin-bottom:10px; border-radius:8px; cursor:pointer;" onclick="window.open('${item.link}', '_blank')">
-                <img src="${item.thumbnail}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">
+        feed.innerHTML = data.items.slice(0, 5).map(item => `
+            <div class="news-item" onclick="window.open('${item.link}')">
+                <img src="${item.thumbnail}">
                 <div>
-                    <h4 style="margin:0; font-size:0.9rem;">${item.title}</h4>
-                    <small style="color:cyan;">IGDB Global Feed</small>
+                    <h4 style="margin:0">${item.title}</h4>
+                    <p style="margin:5px 0 0; font-size:12px; color:cyan;">Global Gaming Update</p>
                 </div>
             </div>
         `).join('');
-    } catch (e) { container.innerHTML = "Offline: Sync failed."; }
+    } catch (e) { feed.innerHTML = "System Offline."; }
 }
 
-// Start everything
-Console.init();
+function adjustScale(val) {
+    document.getElementById('master-ui').style.transform = `scale(${val})`;
+}
+
+UI.start();
