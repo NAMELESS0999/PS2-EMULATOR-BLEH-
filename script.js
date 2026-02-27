@@ -1,15 +1,15 @@
 const pfpImages = [
-    'kratospfp.jpg', 'spidermanpfp.jpg', 'gtacarlpfp.jpg', 'mariopfp.jpg', 
-    'sonicpfp.jpg', 'johnwickpfp.jpg', 'shrekpfp.jpg', 'pacmanpfp.jpg',
-    'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg', 'goodmanpfp.jpg'
+    'goodmanpfp.jpg', 'gtacarlpfp.jpg', 'jamesbondpfp.jpg', 'johnwickpfp.jpg',
+    'kratospfp.jpg', 'kratospfpb.jpg', 'luigipfp.jpg', 'mariopfp.jpg',
+    'milespfp.jpg', 'pacmangpfp.jpg', 'pyramidheadpfp.jpg', 'rambopfp.jpg',
+    'rdrpfp.png', 'shadowpfp.png', 'shrekpfp.jpg', 'silenthillpfp.jpg',
+    'sonicpfp.jpg', 'spidermanpfp.jpg'
 ];
 
 const games = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
 
 function init() {
     const strip = document.getElementById('game-strip');
-    strip.innerHTML = ''; 
-
     games.forEach((name, i) => {
         const card = document.createElement('div');
         card.className = `game-card ${i === 0 ? 'active' : ''}`;
@@ -20,31 +20,36 @@ function init() {
         };
         strip.appendChild(card);
     });
-
     updateClock();
     setInterval(updateClock, 1000);
 }
 
-function updateClock() {
-    const clockEl = document.getElementById('clock');
-    if (clockEl) {
-        const now = new Date();
-        clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
+function openNews() {
+    const grid = document.getElementById('news-grid');
+    grid.innerHTML = '<p>Fetching latest from IGDB...</p>';
+    openMenu('news-view');
+    
+    // Simulate fetching 100 items (normally you'd use fetch() with an API key)
+    setTimeout(() => {
+        grid.innerHTML = '';
+        for(let i=1; i<=100; i++) {
+            grid.innerHTML += `
+                <div class="news-item">
+                    <img src="https://picsum.photos/seed/${i+20}/300/200">
+                    <h3>Latest Gaming Headline #${i}</h3>
+                </div>`;
+        }
+    }, 800);
 }
 
-// Menu Controls
-function openMenu(id) {
-    const menu = document.getElementById(id);
-    if (menu) menu.classList.add('active');
+function setTheme(mode) {
+    document.body.className = mode === 'light' ? 'light-mode' : '';
 }
 
-function closeMenu(id) {
-    const menu = document.getElementById(id);
-    if (menu) menu.classList.remove('active');
+function setFPS(val) {
+    alert("FPS Capped at: " + (val === 'unlimited' ? '160' : val));
 }
 
-// Profile Picture Gallery Logic
 function openPfpMenu() {
     const grid = document.getElementById('pfp-grid');
     grid.innerHTML = '';
@@ -54,15 +59,19 @@ function openPfpMenu() {
         el.className = 'pfp-option';
         el.onclick = () => {
             document.getElementById('main-avatar').style.backgroundImage = `url('pfp/${img}')`;
-            closePfpMenu();
+            closeMenu('pfp-modal');
         };
         grid.appendChild(el);
     });
-    document.getElementById('pfp-modal').classList.add('active');
+    openMenu('pfp-modal');
 }
 
-function closePfpMenu() {
-    document.getElementById('pfp-modal').classList.remove('active');
+function openMenu(id) { document.getElementById(id).classList.add('active'); }
+function closeMenu(id) { document.getElementById(id).classList.remove('active'); }
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 window.onload = init;
