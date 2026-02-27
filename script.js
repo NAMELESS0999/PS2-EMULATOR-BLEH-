@@ -1,13 +1,15 @@
 // CONSOLE SYSTEM CORE
 const UI = {
     index: 0,
-    games: [
-        { name: "God of War II", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=GOW+II" },
-        { name: "Jak 3", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=Jak+3" },
-        { name: "Ratchet & Clank", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=R+and+C" },
-        { name: "Sly Cooper", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=Sly+Cooper" }
+games: [
+        { name: "God of War II", img: "https://via.placeholder.com/300x400/222/fff?text=GOW+II" },
+        { name: "Jak 3", img: "https://via.placeholder.com/300x400/222/fff?text=Jak+3" },
+        { name: "Ratchet & Clank", img: "https://via.placeholder.com/300x400/222/fff?text=R+and+C" },
+        { name: "Sly Cooper", img: "https://via.placeholder.com/300x400/222/fff?text=Sly+Cooper" },
+        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" },
+        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" },
+        { name: "Empty Slot", img: "https://via.placeholder.com/300x400/111/444?text=+" }
     ],
-
     start() {
         this.render();
         this.listen();
