@@ -3,89 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Console | Pro Edition</title>
+    <title>JS Console | Ultimate UI</title>
     <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@latest/coi-serviceworker.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body data-theme="dark">
 
-    <div id="app-shell">
-        <header class="system-header">
-            <div class="user-pill">
-                <div class="avatar-circle"></div>
-                <span class="user-name">Player 1</span>
+    <div id="master-container">
+        <header class="system-bar">
+            <div class="profile-section" id="profile-trigger">
+                <div class="avatar-glow">
+                    <div class="avatar-main"></div>
+                </div>
+                <span class="profile-name">Player 1</span>
             </div>
-            <div class="system-info">
-                <span id="fps-display">60 FPS</span>
-                <span class="wifi-icon">📶</span>
-                <span class="battery">88% 🔋</span>
-                <span id="digital-clock">00:00</span>
+            <div class="system-stats">
+                <div class="stat-item"><span id="live-fps">60</span> FPS</div>
+                <div class="stat-item">📶</div>
+                <div class="stat-item">88% 🔋</div>
+                <div class="stat-item" id="system-time">00:00</div>
             </div>
         </header>
 
-        <main class="console-body">
-            <div class="active-game-label" id="game-title">Select a Software</div>
-            <div class="game-rail-container">
-                <div class="game-rail" id="game-rail">
+        <main class="viewport">
+            <h2 class="selection-header" id="current-title">Select Software</h2>
+            <div class="carousel-wrapper">
+                <div class="game-rail" id="main-rail">
                     </div>
             </div>
         </main>
 
         <footer class="system-footer">
-            <div class="action-buttons">
-                <button class="action-btn" onclick="openModal('news-modal')">
-                    <div class="icon-circle">📰</div>
+            <div class="action-row">
+                <div class="icon-group" onclick="openNavMenu('news-view')">
+                    <div class="circle-btn">📰</div>
                     <span>News</span>
-                </button>
-                <button class="action-btn" onclick="openModal('controller-modal')">
-                    <div class="icon-circle">🎮</div>
+                </div>
+                <div class="icon-group" onclick="openNavMenu('controller-view')">
+                    <div class="circle-btn">🎮</div>
                     <span>Controllers</span>
-                </button>
-                <button class="action-btn" onclick="openModal('settings-modal')">
-                    <div class="icon-circle">⚙️</div>
+                </div>
+                <div class="icon-group" onclick="openNavMenu('settings-view')">
+                    <div class="circle-btn">⚙️</div>
                     <span>Settings</span>
-                </button>
-                <button class="action-btn" onclick="location.reload()">
-                    <div class="icon-circle">⭕</div>
+                </div>
+                <div class="icon-group" onclick="location.reload()">
+                    <div class="circle-btn">⭕</div>
                     <span>Power</span>
-                </button>
+                </div>
             </div>
-            <div class="button-hints">
-                <span><b class="btn-a">A</b> OK</span>
-                <span><b class="btn-b">B</b> Back</span>
+            <div class="legend">
+                <span class="key-hint"><b>A</b> OK</span>
+                <span class="key-hint"><b>B</b> Back</span>
             </div>
         </footer>
 
-        <div class="overlay" id="news-modal">
-            <div class="modal-window">
-                <h2>Gaming News</h2>
-                <div class="news-list" id="news-content">Loading live feed...</div>
-                <button class="modal-close" onclick="closeAllModals()">Close</button>
+        <section class="modal-layer" id="modal-overlay">
+            
+            <div class="modal-content-wrapper" id="settings-view">
+                <div class="modal-header">
+                    <h3>System Settings</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="config-row">
+                        <label>Screen Theme</label>
+                        <button class="toggle-switch" onclick="toggleSystemTheme()">Toggle Light/Dark</button>
+                    </div>
+                    <div class="config-row">
+                        <label>UI Magnification</label>
+                        <input type="range" min="0.5" max="1.8" step="0.01" value="1" oninput="updateUIScale(this.value)">
+                    </div>
+                    <div class="config-row">
+                        <label>Frame Limit</label>
+                        <select onchange="updateFPSCap(this.value)">
+                            <option value="30">30 FPS</option>
+                            <option value="60" selected>60 FPS</option>
+                            <option value="120">144 FPS</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="modal-btn-close" onclick="closeNavMenu()">Apply & Return</button>
             </div>
-        </div>
 
-        <div class="overlay" id="settings-modal">
-            <div class="modal-window">
-                <h2>System Settings</h2>
-                <div class="setting-item">
-                    <span>Color Theme</span>
-                    <button class="toggle" onclick="uiThemeToggle()">Light/Dark</button>
+            <div class="modal-content-wrapper" id="controller-view">
+                <h3>Controllers</h3>
+                <div class="controller-status">
+                    <p>Searching for input device...</p>
+                    <div class="controller-img">🎮</div>
                 </div>
-                <div class="setting-item">
-                    <span>UI Scale (Resolution)</span>
-                    <input type="range" min="0.5" max="1.5" step="0.1" value="1" oninput="uiScaleUpdate(this.value)">
-                </div>
-                <div class="setting-item">
-                    <span>FPS Cap</span>
-                    <select onchange="uiFpsUpdate(this.value)">
-                        <option value="30">30 FPS</option>
-                        <option value="60" selected>60 FPS</option>
-                        <option value="120">Uncapped</option>
-                    </select>
-                </div>
-                <button class="modal-close" onclick="closeAllModals()">Apply</button>
+                <button class="modal-btn-close" onclick="closeNavMenu()">Close</button>
             </div>
-        </div>
+
+        </section>
     </div>
 
     <script src="script.js"></script>
