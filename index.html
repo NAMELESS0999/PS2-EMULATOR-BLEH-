@@ -14,49 +14,87 @@
                 <div class="avatar" id="main-avatar"></div>
                 <span>Player 1</span>
             </div>
-            <div class="system-stats"><span id="clock">00:00 AM</span></div>
+            <div class="system-stats">
+                <span id="clock">00:00 AM</span>
+                <span>📶</span>
+            </div>
         </nav>
 
         <main class="stage">
             <h1 id="game-title-display">Select Software</h1>
-            <div id="game-strip"></div>
+            <div class="carousel-container">
+                <div id="game-strip"></div>
+            </div>
         </main>
 
         <footer class="system-footer">
             <div class="nav-row">
-                <div class="nav-item" onclick="openNews()"><img src="icons/News.png"><span>News</span></div>
-                <div class="nav-item" onclick="openMenu('ctrl-view')"><img src="icons/Controller.png"><span>Controllers</span></div>
-                <div class="nav-item" onclick="openMenu('settings-view')"><img src="icons/Settings.png"><span>Settings</span></div>
-                <div class="nav-item" onclick="location.reload()"><img src="icons/Power.png"><span>Power</span></div>
+                <div class="nav-item" onclick="openNews()">
+                    <img src="icons/News.png" alt="News">
+                    <span>News</span>
+                </div>
+                <div class="nav-item" onclick="openMenu('ctrl-view')">
+                    <img src="icons/Controller.png" alt="Controllers">
+                    <span>Controllers</span>
+                </div>
+                <div class="nav-item" onclick="openMenu('settings-view')">
+                    <img src="icons/Settings.png" alt="Settings">
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" onclick="location.reload()">
+                    <img src="icons/Power.png" alt="Power">
+                    <span>Power</span>
+                </div>
             </div>
         </footer>
     </div>
 
-    <div id="pfp-modal" class="overlay"><div class="modal-card"><h2>Profile Icons</h2><div id="pfp-grid" class="pfp-grid"></div><button onclick="closeMenu('pfp-modal')">Back</button></div></div>
+    <div id="pfp-modal" class="overlay">
+        <div class="modal-card">
+            <h2>Select Profile Icon</h2>
+            <div id="pfp-grid" class="pfp-grid"></div>
+            <button onclick="closeMenu('pfp-modal')" class="back-btn">Back</button>
+        </div>
+    </div>
 
-    <div id="news-view" class="overlay"><div class="modal-card"><h2>Gaming Pulse</h2><div id="news-grid" class="news-grid"></div><button onclick="closeMenu('news-view')">Back</button></div></div>
+    <div id="news-view" class="overlay">
+        <div class="modal-card full-page">
+            <h2>Gaming Pulse</h2>
+            <div id="news-grid" class="news-grid"></div>
+            <button onclick="closeMenu('news-view')" class="back-btn">Back</button>
+        </div>
+    </div>
 
     <div id="ctrl-view" class="overlay">
         <div class="modal-card">
-            <h2>Controllers</h2>
-            <div id="bt-list"><p>Searching for devices...</p></div>
-            <button onclick="alert('1. Put device in pairing mode\n2. Select it from the list\n3. Confirm PIN')">Help</button>
-            <button onclick="closeMenu('ctrl-view')">Back</button>
+            <h2>Bluetooth Devices</h2>
+            <div class="device-list">
+                <p>Searching for nearby devices...</p>
+                <div class="device-item">DualShock 4 <span>Disconnected</span></div>
+            </div>
+            <div class="help-section">
+                <button onclick="showBtHelp()" class="help-btn">Help / Tutorial</button>
+            </div>
+            <button onclick="closeMenu('ctrl-view')" class="back-btn">Back</button>
         </div>
     </div>
 
     <div id="settings-view" class="overlay">
         <div class="modal-card">
             <h2>System Settings</h2>
-            <div class="settings-group">
-                <p>Theme:</p>
-                <div class="btn-row"><button onclick="setTheme('dark')">Dark</button><button onclick="setTheme('light')">Light</button></div>
+            <div class="setting-item">
+                <p>Theme Mode</p>
+                <button onclick="toggleTheme('dark')">Dark</button>
+                <button onclick="toggleTheme('light')">Light</button>
             </div>
-            <div class="settings-group">
-                <p>Frame Rate Limit:</p>
-                <div class="btn-row"><button onclick="setFPS(30)">30</button><button onclick="setFPS(60)">60</button><button onclick="setFPS(120)">120</button><button onclick="setFPS('unlimited')">MAX</button></div>
+            <div class="setting-item">
+                <p>Frame Rate Limit</p>
+                <button onclick="setFPS(30)">30</button>
+                <button onclick="setFPS(60)">60</button>
+                <button onclick="setFPS(120)">120</button>
+                <button onclick="setFPS(160)">MAX</button>
             </div>
-            <button onclick="closeMenu('settings-view')">Back</button>
+            <button onclick="closeMenu('settings-view')" class="back-btn">Back</button>
         </div>
     </div>
 
