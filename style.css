@@ -1,154 +1,52 @@
-/* SWITCH UI STYLESHEET */
 :root {
-    --bg: #121212;
-    --text: #ffffff;
     --accent: #00d4ff;
-    --surface: #2d2d2d;
-    --scale: 1;
+    --bg: #0f0f0f;
+    --surface: rgba(255, 255, 255, 0.05);
 }
-
-[data-theme="light"] {
-    --bg: #ebebeb;
-    --text: #1a1a1a;
-    --accent: #e60012;
-    --surface: #ffffff;
-}
-
-* { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); }
 
 body {
-    background-color: var(--bg);
-    color: var(--text);
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
+    margin: 0; background: var(--bg); color: #fff;
+    font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh;
 }
 
-#ui-wrapper {
-    zoom: var(--scale);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+#master-ui { display: flex; flex-direction: column; height: 100%; transition: transform 0.3s ease; }
+
+/* Status Bar */
+.top-nav { display: flex; justify-content: space-between; padding: 30px 60px; align-items: center; }
+.avatar { width: 45px; height: 45px; background: #ff4e50; border-radius: 50%; border: 3px solid #fff; }
+
+/* Carousel with Safe-Glow Padding */
+.stage { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+#game-title-display { margin-left: 10%; font-size: 2.5rem; color: var(--accent); }
+
+.carousel-container {
+    width: 100%; overflow-x: auto;
+    padding: 80px 0; /* Huge padding so glow NEVER cuts off */
+}
+.carousel-container::-webkit-scrollbar { display: none; }
+
+#game-strip { display: flex; gap: 30px; padding: 0 10%; }
+
+.game-card {
+    min-width: 280px; height: 280px; background: var(--surface);
+    border-radius: 10px; border: 4px solid transparent; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* TOP BAR */
-.top-nav { display: flex; justify-content: space-between; padding: 40px 80px; align-items: center; }
-.user-avatar { width: 50px; height: 50px; background: #ff4500; border-radius: 50%; border: 3px solid #fff; }
-
-/* CAROUSEL - FIXING THE CUT-OFF GLOW */
-.main-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-#selection-name { margin-left: 10%; font-size: 2.2rem; color: var(--accent); }
-
-.carousel-box {
-    width: 100%;
-    overflow-x: auto;
-    padding: 60px 0; /* Huge padding so glow isn't cut off */
-    scroll-snap-type: x mandatory;
+.game-card.active {
+    transform: scale(1.15); border-color: var(--accent);
+    box-shadow: 0 0 50px var(--accent); z-index: 10;
 }
 
-.carousel-box::-webkit-scrollbar { display: none; }
+.game-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
 
-.game-strip { display: flex; gap: 20px; padding: 0 10%; }
+/* Modals */
+.overlay-hide { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
+.overlay-show { display: flex; animation: fadeIn 0.3s forwards; }
 
-.card {
-    min-width: 300px;
-    height: 300px;
-    background: var(--surface);
-    border: 6px solid transparent;
-    border-radius: 4px;
-    scroll-snap-align: center;
-    cursor: pointer;
-    overflow: visible; /* Allows glow to spill out */
-}
+.modal-card { background: #1a1a1a; padding: 40px; border-radius: 20px; width: 600px; border: 1px solid #333; }
+.menu-view { display: none; }
 
-.card.active {
-    transform: scale(1.12);
-    border-color: var(--accent);
-    box-shadow: 0 0 40px var(--accent);
-    z-index: 10;
-}
-
-.card img { width: 100%; height: 100%; object-fit: cover; }
-
-/* BOTTOM BUTTONS */
-.bottom-nav { padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.1); }
-.btn-row { display: flex; justify-content: center; gap: 40px; }
-.sys-btn { background: none; border: none; color: var(--text); cursor: pointer; text-align: center; }
-
-.btn-ico {
-    width: 70px; height: 70px; background: var(--surface);
-    border-radius: 50%; display: flex; justify-content: center; align-items: center;
-    font-size: 2rem; margin-bottom: 10px; border: 2px solid transparent;
-}
-
-.sys-btn:hover .btn-ico { border-color: var(--accent); transform: translateY(-5px); }
-
-/* MODALS & ANIMATIONS */
-#modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 1000;
-    display: none; justify-content: center; align-items: center;
-}
-
-.overlay-show { display: flex !important; animation: fadeIn 0.3s forwards; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(1.1); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.modal-box {
-    background: var(--surface); padding: 50px; border-radius: 20px;
-    width: 600px; text-align: center;
-}
-
-.view-hide { display: none; }
-.view-show { display: block; }
-.set-row { display: flex; justify-content: space-between; margin: 25px 0; align-items: center; }
-/* --- IGDB NEWS REFINEMENT --- */
-#news-list-container {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-top: 20px;
-    padding-right: 10px;
-}
-
-.news-card {
-    display: flex;
-    gap: 15px;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-}
-
-.news-card:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
-    transform: translateX(10px); /* Smooth IGDB-style slide */
-}
-
-.news-card img {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.news-card-content h4 {
-    margin: 0 0 5px 0;
-    font-size: 1rem;
-    color: #fff;
-}
-
-.news-card-content p {
-    margin: 0;
-    font-size: 0.75rem;
-    color: var(--accent);
-    text-transform: uppercase;
-}
+/* IGDB News Item Styling */
+.news-item { display: flex; gap: 15px; background: var(--surface); padding: 15px; margin-bottom: 10px; border-radius: 10px; transition: 0.2s; cursor: pointer; }
+.news-item:hover { background: rgba(255,255,255,0.1); transform: translateX(10px); }
+.news-item img { width: 70px; height: 70px; border-radius: 5px; object-fit: cover; }
