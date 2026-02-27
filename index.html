@@ -29,19 +29,23 @@
 
         <footer class="bottom-nav">
             <div class="nav-icons">
-                <div class="nav-item" onclick="openMenu('news-view')">
-                    <div class="icon-circle">📰</div>
-                    <span>News</span>
-                </div>
-                <div class="nav-item" onclick="openMenu('settings-view')">
-                    <div class="icon-circle">⚙️</div>
-                    <span>Settings</span>
-                </div>
-                <div class="nav-item" onclick="location.reload()">
-                    <div class="icon-circle">⭕</div>
-                    <span>Power</span>
-                </div>
-            </div>
+    <div class="nav-item" onclick="openMenu('news-view')">
+        <img src="News.png" class="menu-icon-img">
+        <span>News</span>
+    </div>
+    <div class="nav-item" onclick="openMenu('ctrl-view')">
+        <img src="Controller.png" class="menu-icon-img">
+        <span>Controllers</span>
+    </div>
+    <div class="nav-item" onclick="openMenu('settings-view')">
+        <img src="Settings.png" class="menu-icon-img">
+        <span>Settings</span>
+    </div>
+    <div class="nav-item" onclick="location.reload()">
+        <img src="Power.png" class="menu-icon-img">
+        <span>Power</span>
+    </div>
+</div>
         </footer>
 
         <div id="overlay-layer" class="overlay-hide" onclick="closeMenu()">
