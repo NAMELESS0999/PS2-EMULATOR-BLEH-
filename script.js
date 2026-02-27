@@ -2,9 +2,10 @@
 const UI = {
     index: 0,
     games: [
-        { name: "God of War II", img: "https://m.media-amazon.com/images/M/MV5BMzI0NmVlZjctN2U0ZS00ZWFmLTlmZGUtYjc3ZTU5YmRjYjVjXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_.jpg" },
-        { name: "Jak 3", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" },
-        { name: "Ratchet & Clank", img: "https://m.media-amazon.com/images/M/MV5BMTYxNjkxNDY3NV5BMl5BanBnXkFtZTcwNjk0OTcyMQ@@._V1_.jpg" }
+        { name: "God of War II", img: "icons/GOW2.png" },
+        { name: "Jak 3", img: "icons/JAK3.png" },
+        { name: "Ratchet & Clank", img: "icons/R&C.png" },
+        { name: "Sly Cooper", img: "icons/SLY.png" }
     ],
 
     start() {
