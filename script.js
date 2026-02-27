@@ -5,19 +5,19 @@ const games = [
     { name: "Sly Cooper", img: "" }
 ];
 
-// Exact filenames from your GitHub /pfp/ folder
 const pfpImages = [
     'kratospfp.jpg', 'spidermanpfp.jpg', 'gtacarlpfp.jpg', 'mariopfp.jpg', 
     'sonicpfp.jpg', 'johnwickpfp.jpg', 'shrekpfp.jpg', 'pacmanpfp.jpg',
-    'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg'
+    'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg', 'goodmanpfp.jpg'
 ];
 
 function init() {
     const strip = document.getElementById('game-strip');
+    strip.innerHTML = ''; // Clean start
     games.forEach((game, index) => {
         const card = document.createElement('div');
         card.className = `game-card ${index === 0 ? 'active' : ''}`;
-        card.innerHTML = `<img src="${game.img || 'https://via.placeholder.com/300?text=PS2'}" alt="${game.name}">`;
+        card.innerHTML = `<img src="${game.img || 'https://via.placeholder.com/300?text=PS2'}" style="width:100%; height:100%; border-radius:8px;">`;
         card.onclick = () => {
             document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
             card.classList.add('active');
@@ -52,7 +52,16 @@ function openPfpMenu() {
 }
 
 function closePfpMenu() { document.getElementById('pfp-modal').classList.remove('overlay-show'); }
-function openMenu(id) { document.getElementById(id).classList.add('overlay-show'); }
-function closeMenu(id) { document.getElementById(id).classList.remove('overlay-show'); }
+
+// Universal Menu Controls
+function openMenu(id) {
+    const menu = document.getElementById(id);
+    if(menu) menu.classList.add('overlay-show');
+}
+
+function closeMenu(id) {
+    const menu = document.getElementById(id);
+    if(menu) menu.classList.remove('overlay-show');
+}
 
 window.onload = init;
