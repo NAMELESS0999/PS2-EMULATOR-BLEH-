@@ -92,3 +92,44 @@ body {
     overflow-y: auto;
     display: block !important;
 }
+/* Moves the Bottom Menu to the Horizontal Center */
+.system-footer {
+    position: fixed;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.nav-row {
+    display: flex;
+    gap: 30px; /* Space between News, Power, etc. */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+}
+
+.nav-item img {
+    width: 55px; /* Size for your PNG icons */
+    height: 55px;
+    margin-bottom: 5px;
+}
+
+/* Centers the Game Row in the middle of the screen */
+.carousel-container {
+    height: 100vh;
+    display: flex;
+    align-items: center; /* Vertical Center */
+    justify-content: center; /* Horizontal Center */
+}
+
+#game-strip {
+    display: flex;
+    gap: 25px;
+}
