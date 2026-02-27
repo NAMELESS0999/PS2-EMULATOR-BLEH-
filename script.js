@@ -6,10 +6,11 @@ const pfpImages = [
     'sonicpfp.jpg', 'spidermanpfp.jpg'
 ];
 
-const games = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
-
 function init() {
     const strip = document.getElementById('game-strip');
+    const games = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
+    
+    strip.innerHTML = '';
     games.forEach((name, i) => {
         const card = document.createElement('div');
         card.className = `game-card ${i === 0 ? 'active' : ''}`;
@@ -26,28 +27,28 @@ function init() {
 
 function openNews() {
     const grid = document.getElementById('news-grid');
-    grid.innerHTML = '<p>Fetching latest from IGDB...</p>';
+    grid.innerHTML = '';
+    for(let i=1; i<=100; i++) {
+        grid.innerHTML += `
+            <div class="news-block">
+                <img src="https://picsum.photos/seed/${i+50}/300/200">
+                <h3>Latest Gaming Update #${i}</h3>
+            </div>`;
+    }
     openMenu('news-view');
-    
-    // Simulate fetching 100 items (normally you'd use fetch() with an API key)
-    setTimeout(() => {
-        grid.innerHTML = '';
-        for(let i=1; i<=100; i++) {
-            grid.innerHTML += `
-                <div class="news-item">
-                    <img src="https://picsum.photos/seed/${i+20}/300/200">
-                    <h3>Latest Gaming Headline #${i}</h3>
-                </div>`;
-        }
-    }, 800);
 }
 
-function setTheme(mode) {
-    document.body.className = mode === 'light' ? 'light-mode' : '';
+function showBtHelp() {
+    alert("Bluetooth Pairing Tutorial:\n1. Hold the Sync/Share button on your controller.\n2. Open your device Settings.\n3. Select the Controller from the Bluetooth list.\n4. Once the light stays solid, you are connected!");
+}
+
+function toggleTheme(mode) {
+    if(mode === 'light') document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
 }
 
 function setFPS(val) {
-    alert("FPS Capped at: " + (val === 'unlimited' ? '160' : val));
+    alert("System FPS set to " + val);
 }
 
 function openPfpMenu() {
