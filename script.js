@@ -2,10 +2,10 @@
 const UI = {
     index: 0,
     games: [
-        { name: "God of War II", img: "icons/GOW2.png" },
-        { name: "Jak 3", img: "icons/JAK3.png" },
-        { name: "Ratchet & Clank", img: "icons/R&C.png" },
-        { name: "Sly Cooper", img: "icons/SLY.png" }
+        { name: "God of War II", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=GOW+II" },
+        { name: "Jak 3", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=Jak+3" },
+        { name: "Ratchet & Clank", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=R+and+C" },
+        { name: "Sly Cooper", img: "https://via.placeholder.com/300x300/1a1a1a/ffffff?text=Sly+Cooper" }
     ],
 
     start() {
