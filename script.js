@@ -4,13 +4,13 @@ const pfpImages = [
     'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg', 'goodmanpfp.jpg'
 ];
 
+const games = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
+
 function init() {
-    // Fill the game strip
     const strip = document.getElementById('game-strip');
-    const gameNames = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
-    
-    strip.innerHTML = '';
-    gameNames.forEach((name, i) => {
+    strip.innerHTML = ''; 
+
+    games.forEach((name, i) => {
         const card = document.createElement('div');
         card.className = `game-card ${i === 0 ? 'active' : ''}`;
         card.onclick = () => {
@@ -33,7 +33,7 @@ function updateClock() {
     }
 }
 
-// Menu Functions
+// Menu Controls
 function openMenu(id) {
     const menu = document.getElementById(id);
     if (menu) menu.classList.add('active');
@@ -44,7 +44,7 @@ function closeMenu(id) {
     if (menu) menu.classList.remove('active');
 }
 
-// PFP Specific
+// Profile Picture Gallery Logic
 function openPfpMenu() {
     const grid = document.getElementById('pfp-grid');
     grid.innerHTML = '';
