@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Console UI</title>
+    <title>PS2 Hybrid Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="pfp-modal" class="overlay-hide">
-    <div class="modal-card pfp-selector">
-        <h2>Select Profile Icon</h2>
-        <div id="pfp-grid" class="pfp-grid">
-            </div>
-        <button onclick="closePfpMenu()" class="back-btn">Cancel</button>
+        <div class="modal-card pfp-selector-card">
+            <h2>Select Profile Icon</h2>
+            <div id="pfp-grid" class="pfp-grid"></div>
+            <button onclick="closePfpMenu()" class="back-btn">Back</button>
+        </div>
     </div>
-</div>
+
     <div id="master-ui">
-        <header class="top-nav">
-            <div class="user-profile">
-                <div class="avatar"></div>
+        <nav class="top-nav">
+            <div class="user-profile" onclick="openPfpMenu()">
+                <div class="avatar" id="main-avatar"></div>
                 <span>Player 1</span>
             </div>
-            <div class="status-group">
-                <span id="clock">00:00</span>
-                <span>📶 88% 🔋</span>
+            <div class="system-stats">
+                <span id="clock">00:00 AM</span>
+                <span>📶 88%</span>
+                <span>🔋</span>
             </div>
-        </header>
+        </nav>
 
         <main class="stage">
             <h1 id="game-title-display">Select Software</h1>
@@ -35,49 +37,33 @@
             </div>
         </main>
 
-<footer class="system-footer">
-    <div class="nav-row">
-        <div class="nav-item" onclick="openMenu('news-view')">
-            <img src="icons/News.png" alt="News">
-            <span>News</span>
-        </div>
-        <div class="nav-item" onclick="openMenu('ctrl-view')">
-            <img src="icons/Controller.png" alt="Controllers">
-            <span>Controllers</span>
-        </div>
-        <div class="nav-item" onclick="openMenu('settings-view')">
-            <img src="icons/Settings.png" alt="Settings">
-            <span>Settings</span>
-        </div>
-        <div class="nav-item" onclick="location.reload()">
-            <img src="icons/Power.png" alt="Power">
-            <span>Power</span>
-        </div>
-    </div>
-</footer>
-
-        <div id="overlay-layer" class="overlay-hide" onclick="closeMenu()">
-            <div class="modal-card" onclick="event.stopPropagation()">
-                
-                <div id="news-view" class="menu-view">
-                    <h2>Gaming Pulse</h2>
-                    <p class="subtitle">Latest updates from IGDB & Industry Sources</p>
-                    <hr>
-                    <div id="news-feed">
-                        <div class="loading-pulse">Syncing with servers...</div>
-                    </div>
+        <footer class="system-footer">
+            <div class="nav-row">
+                <div class="nav-item" onclick="openMenu('news-view')">
+                    <img src="icons/News.png" alt="News">
+                    <span>News</span>
                 </div>
-
-                <div id="settings-view" class="menu-view">
-                    <h2>System Settings</h2>
-                    <div class="setting-row">
-                        <span>UI Scale</span>
-                        <input type="range" min="0.5" max="1.5" step="0.1" value="1" oninput="adjustScale(this.value)">
-                    </div>
+                <div class="nav-item" onclick="openMenu('ctrl-view')">
+                    <img src="icons/Controller.png" alt="Controllers">
+                    <span>Controllers</span>
                 </div>
-
-                <button class="back-btn" onclick="closeMenu()">Back</button>
+                <div class="nav-item" onclick="openMenu('settings-view')">
+                    <img src="icons/Settings.png" alt="Settings">
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" onclick="location.reload()">
+                    <img src="icons/Power.png" alt="Power">
+                    <span>Power</span>
+                </div>
             </div>
+        </footer>
+    </div>
+
+    <div id="news-view" class="overlay-hide">
+        <div class="modal-card light-mode">
+            <h2>Gaming Pulse</h2>
+            <div id="news-feed"></div>
+            <button onclick="closeMenu('news-view')" class="back-btn">Back</button>
         </div>
     </div>
 
