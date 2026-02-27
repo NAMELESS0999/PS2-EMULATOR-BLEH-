@@ -11,25 +11,30 @@ body {
 
 #master-ui { display: flex; flex-direction: column; height: 100%; transition: transform 0.3s ease; }
 
-/* Status Bar */
+/* --- Top Status Bar --- */
 .top-nav { display: flex; justify-content: space-between; padding: 30px 60px; align-items: center; }
 .avatar { width: 45px; height: 45px; background: #ff4e50; border-radius: 50%; border: 3px solid #fff; }
 
-/* Carousel with Safe-Glow Padding */
+/* --- Main Game Stage (Switch Style Middle) --- */
 .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-#game-title-display { margin-left: 10%; font-size: 2.5rem; color: var(--accent); }
+#game-title-display { margin-left: 10%; font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; }
 
 .carousel-container {
-    width: 100%; overflow-x: auto;
-    padding: 80px 0; /* Huge padding so glow NEVER cuts off */
+    width: 100%;
+    height: 50vh; /* Keeps games in the vertical middle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible; 
 }
-.carousel-container::-webkit-scrollbar { display: none; }
 
-#game-strip { display: flex; gap: 30px; padding: 0 10%; }
+#game-strip { display: flex; gap: 30px; padding: 0 50px; }
 
 .game-card {
     min-width: 280px; height: 280px; background: var(--surface);
-    border-radius: 10px; border: 4px solid transparent; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 10px; border: 4px solid transparent; 
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden; /* Clips placeholder/art to corners */
 }
 
 .game-card.active {
@@ -37,103 +42,12 @@ body {
     box-shadow: 0 0 50px var(--accent); z-index: 10;
 }
 
-.game-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-
-/* Modals */
-.overlay-hide { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
-.overlay-show { display: flex; animation: fadeIn 0.3s forwards; }
-
-.modal-card { background: #1a1a1a; padding: 40px; border-radius: 20px; width: 600px; border: 1px solid #333; }
-.menu-view { display: none; }
-
-/* IGDB News Item Styling */
-.news-item { display: flex; gap: 15px; background: var(--surface); padding: 15px; margin-bottom: 10px; border-radius: 10px; transition: 0.2s; cursor: pointer; }
-.news-item:hover { background: rgba(255,255,255,0.1); transform: translateX(10px); }
-.news-item img { width: 70px; height: 70px; border-radius: 5px; object-fit: cover; }
-/* 1. Center the Game Row on the screen */
-.carousel-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50vh; /* Pushes the games to the middle */
-    padding: 100px 0;
+.game-card img { 
+    width: 100%; height: 100%; 
+    object-fit: cover; 
 }
 
-/* 2. Make the Game Icons fill the boxes */
-.game-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* This makes the box art fill the square */
-    border-radius: 10px;
-}
-
-/* 3. Style your new Footer PNGs */
-.menu-icon-img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 5px;
-    transition: transform 0.2s;
-}
-
-.nav-item:hover .menu-icon-img {
-    transform: scale(1.2); /* Makes icons pop when you hover */
-}
-
-/* 4. Full-Page News Mode (Nintendo Switch Style) */
-#news-view.active {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #0b0b0b;
-    z-index: 9999;
-    padding: 60px;
-    overflow-y: auto;
-    display: block !important;
-}
-/* Moves the Bottom Menu to the Horizontal Center */
-.system-footer {
-    position: fixed;
-    bottom: 40px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 10;
-}
-
-.nav-row {
-    display: flex;
-    gap: 30px; /* Space between News, Power, etc. */
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    font-size: 14px;
-}
-
-.nav-item img {
-    width: 55px; /* Size for your PNG icons */
-    height: 55px;
-    margin-bottom: 5px;
-}
-
-/* Centers the Game Row in the middle of the screen */
-.carousel-container {
-    height: 100vh;
-    display: flex;
-    align-items: center; /* Vertical Center */
-    justify-content: center; /* Horizontal Center */
-}
-
-#game-strip {
-    display: flex;
-    gap: 25px;
-}
-/* Centers the entire Bottom Menu */
+/* --- Bottom Menu (The PNG Icons) --- */
 .system-footer {
     position: fixed;
     bottom: 40px;
@@ -143,37 +57,31 @@ body {
     z-index: 100;
 }
 
-.nav-row {
-    display: flex;
-    gap: 35px;
-}
+.nav-row { display: flex; gap: 35px; }
 
 .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; cursor: pointer;
+    color: white; font-size: 12px; font-weight: bold;
 }
 
-/* Styles your circular PNGs */
 .nav-item img {
-    width: 50px;
-    height: 50px;
+    width: 55px; height: 55px; /* Size for News.png, Power.png, etc */
     margin-bottom: 8px;
     transition: transform 0.2s;
 }
 
-.nav-item:hover img {
-    transform: scale(1.1);
+.nav-item:hover img { transform: scale(1.2); }
+
+/* --- Modals & News (Switch Style Full Page) --- */
+.overlay-hide { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+.overlay-show { display: flex; animation: fadeIn 0.3s forwards; }
+
+#news-view.active {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #0b0b0b; padding: 60px; overflow-y: auto;
+    display: block !important;
 }
 
-/* Centers the Games in the middle of the screen */
-.carousel-container {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.news-item { display: flex; gap: 15px; background: var(--surface); padding: 15px; margin-bottom: 10px; border-radius: 10px; }
+.news-item img { width: 70px; height: 70px; border-radius: 5px; object-fit: cover; }
