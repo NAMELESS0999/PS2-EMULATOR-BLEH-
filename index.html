@@ -11,17 +11,17 @@
     <div id="master-ui">
         <nav class="top-nav">
             <div class="user-profile" onclick="openPfpMenu()">
-                <div class="avatar" id="main-avatar"></div>
-                <span>Player 1</span>
+                <div class="avatar" id="main-avatar" style="background-image: url('pfp/goodmanpfp.jpg');"></div>
+                <span class="username">Player 1</span>
             </div>
             <div class="system-stats">
                 <span id="clock">00:00 AM</span>
-                <span>📶</span>
+                <span id="battery-status">🔋 --%</span>
             </div>
         </nav>
 
         <main class="stage">
-            <h1 id="game-title-display">Select Software</h1>
+            <h1 id="game-title-display">God of War II</h1>
             <div class="carousel-container">
                 <div id="game-strip"></div>
             </div>
@@ -60,6 +60,7 @@
     <div id="news-view" class="overlay">
         <div class="modal-card full-page">
             <h2>Gaming Pulse</h2>
+            <p class="subtitle">Latest updates from around the globe</p>
             <div id="news-grid" class="news-grid"></div>
             <button onclick="closeMenu('news-view')" class="back-btn">Back</button>
         </div>
@@ -69,11 +70,12 @@
         <div class="modal-card">
             <h2>Bluetooth Devices</h2>
             <div class="device-list">
-                <p>Searching for nearby devices...</p>
-                <div class="device-item">DualShock 4 <span>Disconnected</span></div>
+                <div class="device-item sync-pulse">Searching for nearby devices...</div>
+                <div class="device-item">DualShock 4 <span class="status-badge">Paired</span></div>
+                <div class="device-item">Xbox Wireless Controller <span class="status-badge off">Offline</span></div>
             </div>
             <div class="help-section">
-                <button onclick="showBtHelp()" class="help-btn">Help / Tutorial</button>
+                <button onclick="showBtHelp()" class="help-btn">How to Pair Devices</button>
             </div>
             <button onclick="closeMenu('ctrl-view')" class="back-btn">Back</button>
         </div>
@@ -83,16 +85,20 @@
         <div class="modal-card">
             <h2>System Settings</h2>
             <div class="setting-item">
-                <p>Theme Mode</p>
-                <button onclick="toggleTheme('dark')">Dark</button>
-                <button onclick="toggleTheme('light')">Light</button>
+                <p>Display Theme</p>
+                <div class="button-group">
+                    <button onclick="toggleTheme('dark')">Dark</button>
+                    <button onclick="toggleTheme('light')">Light</button>
+                </div>
             </div>
             <div class="setting-item">
-                <p>Frame Rate Limit</p>
-                <button onclick="setFPS(30)">30</button>
-                <button onclick="setFPS(60)">60</button>
-                <button onclick="setFPS(120)">120</button>
-                <button onclick="setFPS(160)">MAX</button>
+                <p>Frame Rate Target</p>
+                <div class="button-group">
+                    <button onclick="setFPS(30)">30 FPS</button>
+                    <button onclick="setFPS(60)">60 FPS</button>
+                    <button onclick="setFPS(120)">120 FPS</button>
+                    <button onclick="setFPS(160)">MAX</button>
+                </div>
             </div>
             <button onclick="closeMenu('settings-view')" class="back-btn">Back</button>
         </div>
