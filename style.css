@@ -107,60 +107,48 @@ body {
 .view-hide { display: none; }
 .view-show { display: block; }
 .set-row { display: flex; justify-content: space-between; margin: 25px 0; align-items: center; }
-/* --- MULTI-PLATFORM NEWS STYLING --- */
-#view-news-list {
-    max-height: 420px;
+/* --- IGDB NEWS REFINEMENT --- */
+#news-list-container {
+    max-height: 400px;
     overflow-y: auto;
-    padding-right: 15px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent) transparent;
+    margin-top: 20px;
+    padding-right: 10px;
 }
 
 .news-card {
     display: flex;
     gap: 15px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     padding: 15px;
     margin-bottom: 12px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 .news-card:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--accent);
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(10px); /* Smooth IGDB-style slide */
 }
 
 .news-card img {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     border-radius: 8px;
     object-fit: cover;
-    flex-shrink: 0;
 }
 
-.news-info {
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.news-info h4 {
-    margin: 0 0 8px 0;
-    font-size: 1.1rem;
-    line-height: 1.2;
+.news-card-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
     color: #fff;
 }
 
-.news-tag {
-    font-size: 0.7rem;
-    text-transform: uppercase;
+.news-card-content p {
+    margin: 0;
+    font-size: 0.75rem;
     color: var(--accent);
-    letter-spacing: 1px;
-    font-weight: bold;
+    text-transform: uppercase;
 }
