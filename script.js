@@ -1,7 +1,7 @@
 // CONSOLE SYSTEM CORE
 const UI = {
     index: 0,
-games: [
+    games: [
         { name: "God of War II", img: "https://via.placeholder.com/300x400/222/fff?text=GOW+II" },
         { name: "Jak 3", img: "https://via.placeholder.com/300x400/222/fff?text=Jak+3" },
         { name: "Ratchet & Clank", img: "https://via.placeholder.com/300x400/222/fff?text=R+and+C" },
