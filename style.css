@@ -20,12 +20,15 @@ body {
 #game-title-display { margin-left: 10%; font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; }
 
 .carousel-container {
-    width: 100%;
-    height: 50vh; /* Keeps games in the vertical middle */
+    width: 100vw; /* Use the full width of the screen */
+    height: 50vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible; 
+    overflow: visible;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%); /* This perfectly centers the active game */
 }
 
 #game-strip { display: flex; gap: 30px; padding: 0 50px; }
