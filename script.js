@@ -6,11 +6,32 @@ const pfpImages = [
     'sonicpfp.jpg', 'spidermanpfp.jpg'
 ];
 
+const games = ["God of War II", "Sly Cooper", "Ratchet & Clank", "Jak 3"];
+
+// Fake News Data to make it look incredibly real
+const mockHeadlines = [
+    "From One Ghost To Cosmic Gods, RPGs Are Unrecognizable After 30 Years",
+    "We Were All Wrong About The Latest Patch Update",
+    "Video Game Chickens Are Having A Massive Moment Right Now",
+    "New Survival Game Skips Major Consoles, And That's A Good Thing",
+    "The 90s Throwback In More Ways Than One",
+    "Developers Finally Address The Frame Rate Controversy",
+    "Next-Gen Graphics Engine Revealed at Tech Expo",
+    "Top 10 Hidden Details You Missed In Your Favorite Games"
+];
+const mockTags = ["Industry News", "Update", "Review", "Trending", "Rumor"];
+
 function init() {
+    buildGameCarousel();
+    updateClock();
+    setInterval(updateClock, 1000);
+    initBattery();
+}
+
+function buildGameCarousel() {
     const strip = document.getElementById('game-strip');
-    const games = ["God of War II", "Jak 3", "Ratchet & Clank", "Sly Cooper"];
-    
     strip.innerHTML = '';
+    
     games.forEach((name, i) => {
         const card = document.createElement('div');
         card.className = `game-card ${i === 0 ? 'active' : ''}`;
@@ -21,25 +42,57 @@ function init() {
         };
         strip.appendChild(card);
     });
-    updateClock();
-    setInterval(updateClock, 1000);
 }
 
+// Battery Tracker Logic
+async function initBattery() {
+    const batteryStatus = document.getElementById('battery-status');
+    if ('getBattery' in navigator) {
+        try {
+            const battery = await navigator.getBattery();
+            updateBatteryUI(battery, batteryStatus);
+            battery.addEventListener('levelchange', () => updateBatteryUI(battery, batteryStatus));
+            battery.addEventListener('chargingchange', () => updateBatteryUI(battery, batteryStatus));
+        } catch (e) {
+            batteryStatus.innerText = '🔋 100%';
+        }
+    } else {
+        batteryStatus.innerText = '🔋 100%'; // Fallback for browsers that don't support it
+    }
+}
+
+function updateBatteryUI(battery, element) {
+    const level = Math.round(battery.level * 100);
+    const isCharging = battery.charging ? '⚡' : '🔋';
+    element.innerText = `${isCharging} ${level}%`;
+}
+
+// News Feed Generation
 function openNews() {
     const grid = document.getElementById('news-grid');
     grid.innerHTML = '';
+    
+    // Generate 100 random news items
     for(let i=1; i<=100; i++) {
+        const randomHeadline = mockHeadlines[Math.floor(Math.random() * mockHeadlines.length)];
+        const randomTag = mockTags[Math.floor(Math.random() * mockTags.length)];
+        // Use realistic gaming placeholder images
+        const imgId = Math.floor(Math.random() * 200) + 100; 
+        
         grid.innerHTML += `
             <div class="news-block">
-                <img src="https://picsum.photos/seed/${i+50}/300/200">
-                <h3>Latest Gaming Update #${i}</h3>
+                <img src="https://picsum.photos/id/${imgId}/400/250" alt="News Image">
+                <div class="news-content">
+                    <span class="news-tag">${randomTag}</span>
+                    <h3>${randomHeadline}</h3>
+                </div>
             </div>`;
     }
     openMenu('news-view');
 }
 
 function showBtHelp() {
-    alert("Bluetooth Pairing Tutorial:\n1. Hold the Sync/Share button on your controller.\n2. Open your device Settings.\n3. Select the Controller from the Bluetooth list.\n4. Once the light stays solid, you are connected!");
+    alert("Bluetooth Pairing Tutorial:\n\n1. Hold the Sync/Share button on your controller.\n2. Open your device Settings.\n3. Select the Controller from the Bluetooth list.\n4. Once the light stays solid, you are connected!");
 }
 
 function toggleTheme(mode) {
@@ -48,7 +101,7 @@ function toggleTheme(mode) {
 }
 
 function setFPS(val) {
-    alert("System FPS set to " + val);
+    alert("System Frame Rate Limit target set to: " + val + " FPS");
 }
 
 function openPfpMenu() {
