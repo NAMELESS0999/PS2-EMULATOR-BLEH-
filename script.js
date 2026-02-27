@@ -1,3 +1,8 @@
+// --- Data & State ---
+let currentUser = null;
+let controllerIndex = 0;
+let lastButtonPress = 0;
+
 const pfpImages = [
     'goodmanpfp.jpg', 'gtacarlpfp.jpg', 'jamesbondpfp.jpg', 'johnwickpfp.jpg',
     'kratospfp.jpg', 'kratospfpb.jpg', 'luigipfp.jpg', 'mariopfp.jpg',
@@ -5,36 +10,153 @@ const pfpImages = [
     'rdrpfp.png', 'shadowpfp.png', 'shrekpfp.jpg', 'silenthillpfp.jpg',
     'sonicpfp.jpg', 'spidermanpfp.jpg'
 ];
-
 const games = ["God of War II", "Sly Cooper", "Ratchet & Clank", "Jak 3"];
 
-// Fake News Data to make it look incredibly real
-const mockHeadlines = [
-    "From One Ghost To Cosmic Gods, RPGs Are Unrecognizable After 30 Years",
-    "We Were All Wrong About The Latest Patch Update",
-    "Video Game Chickens Are Having A Massive Moment Right Now",
-    "New Survival Game Skips Major Consoles, And That's A Good Thing",
-    "The 90s Throwback In More Ways Than One",
-    "Developers Finally Address The Frame Rate Controversy",
-    "Next-Gen Graphics Engine Revealed at Tech Expo",
-    "Top 10 Hidden Details You Missed In Your Favorite Games"
-];
-const mockTags = ["Industry News", "Update", "Review", "Trending", "Rumor"];
-
+// --- Initialization ---
 function init() {
+    checkLogin();
     buildGameCarousel();
     updateClock();
     setInterval(updateClock, 1000);
     initBattery();
+    window.addEventListener("gamepadconnected", (e) => {
+        document.getElementById('active-gamepad').innerHTML = `Controller Connected <span class="status-badge">Online</span>`;
+        requestAnimationFrame(gamepadLoop);
+    });
 }
 
+// --- Login & Save System ---
+function checkLogin() {
+    const savedData = localStorage.getItem('ps2_user_profile');
+    if (savedData) {
+        currentUser = JSON.parse(savedData);
+        applyUserData();
+        document.getElementById('login-screen').classList.remove('active');
+    } else {
+        document.getElementById('login-avatar').style.backgroundImage = `url('pfp/kratospfp.jpg')`;
+    }
+}
+
+function handleLogin() {
+    const user = document.getElementById('username-input').value.trim();
+    const pass = document.getElementById('password-input').value;
+    
+    if(!user || !pass) return;
+
+    // Check if returning user
+    const savedData = localStorage.getItem('ps2_user_profile');
+    if (savedData) {
+        const parsed = JSON.parse(savedData);
+        if (parsed.username === user && parsed.password !== pass) {
+            document.getElementById('login-error').style.display = 'block';
+            return;
+        }
+    }
+
+    // Create or Log In
+    currentUser = savedData ? JSON.parse(savedData) : { username: user, password: pass, pfp: 'goodmanpfp.jpg', theme: 'dark', fps: 60 };
+    if(!savedData) saveProfile(); 
+    
+    applyUserData();
+    document.getElementById('login-screen').classList.remove('active');
+}
+
+function handleLogout() {
+    document.getElementById('login-screen').classList.add('active');
+    document.getElementById('password-input').value = '';
+    document.getElementById('login-error').style.display = 'none';
+}
+
+function saveProfile() {
+    if(currentUser) localStorage.setItem('ps2_user_profile', JSON.stringify(currentUser));
+}
+
+function applyUserData() {
+    document.getElementById('display-username').innerText = currentUser.username;
+    document.getElementById('main-avatar').style.backgroundImage = `url('pfp/${currentUser.pfp}')`;
+    document.getElementById('login-avatar').style.backgroundImage = `url('pfp/${currentUser.pfp}')`;
+    toggleTheme(currentUser.theme, false);
+}
+
+// --- Controller Navigation (Gamepad API) ---
+function gamepadLoop() {
+    const gamepads = navigator.getGamepads();
+    if (!gamepads || !gamepads[0]) return;
+    const gp = gamepads[0];
+    const now = Date.now();
+
+    // Prevent button spamming (cooldown of 200ms)
+    if (now - lastButtonPress > 200) {
+        // Find all visible interactable elements
+        const focusables = Array.from(document.querySelectorAll('.focusable')).filter(el => el.offsetParent !== null);
+        
+        if(focusables.length > 0) {
+            // D-Pad or Left Stick Movement
+            if (gp.buttons[15]?.pressed || gp.axes[1] > 0.5 || gp.buttons[14]?.pressed || gp.axes[0] > 0.5) { // Right/Down
+                focusables[controllerIndex]?.classList.remove('focused');
+                controllerIndex = (controllerIndex + 1) % focusables.length;
+                lastButtonPress = now;
+            } else if (gp.buttons[12]?.pressed || gp.axes[1] < -0.5 || gp.buttons[13]?.pressed || gp.axes[0] < -0.5) { // Left/Up
+                focusables[controllerIndex]?.classList.remove('focused');
+                controllerIndex = (controllerIndex - 1 + focusables.length) % focusables.length;
+                lastButtonPress = now;
+            }
+            
+            // Highlight current
+            if(focusables[controllerIndex]) {
+                focusables.forEach(f => f.classList.remove('focused'));
+                focusables[controllerIndex].classList.add('focused');
+                focusables[controllerIndex].scrollIntoView({ block: "nearest", inline: "nearest" });
+            }
+
+            // 'A' or 'Cross' Button to Click
+            if (gp.buttons[0]?.pressed) {
+                focusables[controllerIndex].click();
+                lastButtonPress = now;
+                controllerIndex = 0; // Reset index on new screen
+            }
+        }
+    }
+    requestAnimationFrame(gamepadLoop);
+}
+
+// --- Live Real News Feed (RSS Proxy) ---
+async function openNews() {
+    const grid = document.getElementById('news-grid');
+    grid.innerHTML = '<p>Fetching live feed...</p>';
+    openMenu('news-view');
+    
+    try {
+        // Using a free RSS-to-JSON proxy to pull REAL gaming news from PushSquare/IGN style feeds
+        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.gameinformer.com/news.xml');
+        const data = await response.json();
+        
+        grid.innerHTML = '';
+        data.items.forEach((item) => {
+            // Extract image from description or use placeholder
+            const imgMatch = item.description.match(/src="(.*?)"/);
+            const imgSrc = imgMatch ? imgMatch[1] : 'https://picsum.photos/seed/'+Math.random()+'/400/200';
+            
+            grid.innerHTML += `
+                <div class="news-block focusable" onclick="window.open('${item.link}', '_blank')">
+                    <img src="${imgSrc}" alt="Article Image">
+                    <div class="news-content">
+                        <h3>${item.title}</h3>
+                    </div>
+                </div>`;
+        });
+    } catch(err) {
+        grid.innerHTML = '<p>Failed to load live news. Check your internet connection.</p>';
+    }
+}
+
+// --- Standard UI Functions ---
 function buildGameCarousel() {
     const strip = document.getElementById('game-strip');
     strip.innerHTML = '';
-    
     games.forEach((name, i) => {
         const card = document.createElement('div');
-        card.className = `game-card ${i === 0 ? 'active' : ''}`;
+        card.className = `game-card focusable ${i === 0 ? 'active' : ''}`;
         card.onclick = () => {
             document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
             card.classList.add('active');
@@ -44,64 +166,28 @@ function buildGameCarousel() {
     });
 }
 
-// Battery Tracker Logic
 async function initBattery() {
     const batteryStatus = document.getElementById('battery-status');
     if ('getBattery' in navigator) {
         try {
             const battery = await navigator.getBattery();
-            updateBatteryUI(battery, batteryStatus);
-            battery.addEventListener('levelchange', () => updateBatteryUI(battery, batteryStatus));
-            battery.addEventListener('chargingchange', () => updateBatteryUI(battery, batteryStatus));
-        } catch (e) {
-            batteryStatus.innerText = '🔋 100%';
-        }
-    } else {
-        batteryStatus.innerText = '🔋 100%'; // Fallback for browsers that don't support it
+            const updateUI = () => batteryStatus.innerText = `${battery.charging ? '⚡' : '🔋'} ${Math.round(battery.level * 100)}%`;
+            updateUI();
+            battery.addEventListener('levelchange', updateUI);
+            battery.addEventListener('chargingchange', updateUI);
+        } catch (e) { batteryStatus.innerText = '🔋 --%'; }
     }
 }
 
-function updateBatteryUI(battery, element) {
-    const level = Math.round(battery.level * 100);
-    const isCharging = battery.charging ? '⚡' : '🔋';
-    element.innerText = `${isCharging} ${level}%`;
-}
-
-// News Feed Generation
-function openNews() {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '';
-    
-    // Generate 100 random news items
-    for(let i=1; i<=100; i++) {
-        const randomHeadline = mockHeadlines[Math.floor(Math.random() * mockHeadlines.length)];
-        const randomTag = mockTags[Math.floor(Math.random() * mockTags.length)];
-        // Use realistic gaming placeholder images
-        const imgId = Math.floor(Math.random() * 200) + 100; 
-        
-        grid.innerHTML += `
-            <div class="news-block">
-                <img src="https://picsum.photos/id/${imgId}/400/250" alt="News Image">
-                <div class="news-content">
-                    <span class="news-tag">${randomTag}</span>
-                    <h3>${randomHeadline}</h3>
-                </div>
-            </div>`;
-    }
-    openMenu('news-view');
-}
-
-function showBtHelp() {
-    alert("Bluetooth Pairing Tutorial:\n\n1. Hold the Sync/Share button on your controller.\n2. Open your device Settings.\n3. Select the Controller from the Bluetooth list.\n4. Once the light stays solid, you are connected!");
-}
-
-function toggleTheme(mode) {
+function toggleTheme(mode, save = true) {
     if(mode === 'light') document.body.classList.add('light-mode');
     else document.body.classList.remove('light-mode');
+    if(save && currentUser) { currentUser.theme = mode; saveProfile(); }
 }
 
 function setFPS(val) {
-    alert("System Frame Rate Limit target set to: " + val + " FPS");
+    alert("System Frame Rate Limit target saved: " + val + " FPS");
+    if(currentUser) { currentUser.fps = val; saveProfile(); }
 }
 
 function openPfpMenu() {
@@ -110,22 +196,19 @@ function openPfpMenu() {
     pfpImages.forEach(img => {
         const el = document.createElement('img');
         el.src = `pfp/${img}`;
-        el.className = 'pfp-option';
+        el.className = 'pfp-option focusable';
         el.onclick = () => {
-            document.getElementById('main-avatar').style.backgroundImage = `url('pfp/${img}')`;
+            if(currentUser) { currentUser.pfp = img; saveProfile(); applyUserData(); }
             closeMenu('pfp-modal');
         };
         grid.appendChild(el);
     });
     openMenu('pfp-modal');
+    controllerIndex = 0; // Reset controller focus for the new menu
 }
 
-function openMenu(id) { document.getElementById(id).classList.add('active'); }
-function closeMenu(id) { document.getElementById(id).classList.remove('active'); }
-
-function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+function openMenu(id) { document.getElementById(id).classList.add('active'); controllerIndex = 0; }
+function closeMenu(id) { document.getElementById(id).classList.remove('active'); controllerIndex = 0; }
+function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
 window.onload = init;
