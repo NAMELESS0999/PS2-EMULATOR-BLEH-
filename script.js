@@ -77,3 +77,35 @@ function adjustScale(val) {
 }
 
 UI.start();
+// List of your imported pfp files from your GitHub screenshot
+const pfpList = [
+    'kratospfp.jpg', 'spidermanpfp.jpg', 'gtacarlpfp.jpg', 'mariopfp.jpg', 
+    'sonicpfp.jpg', 'johnwickpfp.jpg', 'shrekpfp.jpg', 'pacmanpfp.jpg',
+    'shadowpfp.png', 'rdrpfp.png', 'milespfp.jpg'
+];
+
+function openPfpMenu() {
+    const grid = document.getElementById('pfp-grid');
+    grid.innerHTML = ''; // Clear old list
+    
+    pfpList.forEach(imgName => {
+        const img = document.createElement('img');
+        img.src = `pfp/${imgName}`;
+        img.className = 'pfp-option';
+        img.onclick = () => selectPfp(imgName);
+        grid.appendChild(img);
+    });
+
+    document.getElementById('pfp-modal').classList.add('overlay-show');
+}
+
+function selectPfp(imgName) {
+    // Update the main avatar on the dashboard
+    document.querySelector('.avatar').style.backgroundImage = `url('pfp/${imgName}')`;
+    document.querySelector('.avatar').style.backgroundSize = 'cover';
+    closePfpMenu();
+}
+
+function closePfpMenu() {
+    document.getElementById('pfp-modal').classList.remove('overlay-show');
+}
