@@ -8,15 +8,6 @@
 </head>
 <body>
 
-    <div id="pfp-modal" class="overlay-hide">
-        <div class="modal-card pfp-selector-card">
-            <h2>Select Profile Icon</h2>
-            <div id="pfp-grid" class="pfp-grid">
-                </div>
-            <button onclick="closePfpMenu()" class="back-btn">Back</button>
-        </div>
-    </div>
-
     <div id="master-ui">
         <nav class="top-nav">
             <div class="user-profile" onclick="openPfpMenu()">
@@ -33,8 +24,7 @@
         <main class="stage">
             <h1 id="game-title-display">Select Software</h1>
             <div class="carousel-container">
-                <div id="game-strip">
-                    </div>
+                <div id="game-strip"></div>
             </div>
         </main>
 
@@ -60,12 +50,18 @@
         </footer>
     </div>
 
-    <div id="news-view" class="overlay-hide">
-        <div class="modal-card light-mode">
+    <div id="pfp-modal" class="overlay">
+        <div class="modal-card">
+            <h2>Select Profile Icon</h2>
+            <div id="pfp-grid" class="pfp-grid"></div>
+            <button onclick="closePfpMenu()" class="back-btn">Back</button>
+        </div>
+    </div>
+
+    <div id="news-view" class="overlay">
+        <div class="modal-card">
             <h2>Gaming Pulse</h2>
-            <div id="news-feed">
-                <p>No new updates at this time.</p>
-            </div>
+            <div id="news-feed"><p>No news available.</p></div>
             <button onclick="closeMenu('news-view')" class="back-btn">Back</button>
         </div>
     </div>
