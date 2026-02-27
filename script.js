@@ -105,3 +105,4 @@ function updateFPS(v) {
 }
 
 App.start();
+async function loadGlobalNews() { ... }
