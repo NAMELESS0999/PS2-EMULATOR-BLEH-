@@ -65,9 +65,18 @@ const App = {
 };
 
 // UI HELPER FUNCTIONS
-function uiAction(type) {
+function openNavMenu(menuId) {
     const overlay = document.getElementById('modal-overlay');
-    overlay.className = 'overlay-show';
+    const content = document.getElementById(menuId);
+    
+    overlay.classList.add('show');
+    content.classList.add('active');
+
+    // Add this part below:
+    if(menuId === 'news-view') {
+        loadGlobalNews();
+    }
+}
     
     // Hide all views first
     document.getElementById('view-set').className = 'view-hide';
