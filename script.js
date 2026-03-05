@@ -10,7 +10,48 @@ const pfpImages = [
     'rdrpfp.png', 'shadowpfp.png', 'shrekpfp.jpg', 'silenthillpfp.jpg',
     'sonicpfp.jpg', 'spidermanpfp.jpg'
 ];
-const games = ["God of War II", "Sly Cooper", "Ratchet & Clank", "Jak 3"];
+const gameLibrary = {
+    "God of War II": { 
+        cover: "covers/godofwartwo.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/God%20of%20War%20II%20%28USA%29.iso" 
+    },
+    "Black": { 
+        cover: "covers/black.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Black%20%28USA%29.iso" 
+    },
+    "Spider-Man 3": { 
+        cover: "covers/spiderman3.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Spider-Man%203%20%28USA%29.iso" 
+    },
+    "Simpsons Hit & Run": { 
+        cover: "covers/simpsonhitnrun.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Simpsons%2C%20The%20-%20Hit%20%26%20Run%20%28USA%29.iso" 
+    },
+    "Need for Speed U2": { 
+        cover: "covers/nfsunderground2.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Need%20for%20Speed%20-%20Underground%202%20%28USA%29.iso" 
+    },
+    "Metal Gear Solid 3": { 
+        cover: "covers/metalgearsolid.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Metal%20Gear%20Solid%203%20-%20Subsistence%20%28USA%29%20%28En%2CEs%29%20%28Disc%201%29%20%28Subsistence%29.iso" 
+    },
+    "Shadow the Hedgehog": { 
+        cover: "covers/shadowthehedgehog.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Shadow%20the%20Hedgehog%20%28USA%29%20%28En%2CJa%2CFr%2CDe%2CEs%2CIt%29.iso" 
+    },
+    "Red Dead Revolver": { 
+        cover: "covers/rdr.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Red%20Dead%20Revolver%20%28USA%29.iso" 
+    },
+    "Madden NFL 12": { 
+        cover: "covers/madden12.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Madden%20NFL%2012%20%28USA%29.iso" 
+    },
+    "Harry Potter": { 
+        cover: "covers/harrypotter.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Harry%20Potter%20and%20the%20Half-Blood%20Prince%20%28USA%29%20%28En%2CFr%2CEs%2CPt%29.iso" 
+    }
+};
 
 // --- Initialization ---
 function init() {
