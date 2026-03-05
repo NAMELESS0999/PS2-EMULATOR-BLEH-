@@ -1,50 +1,41 @@
-// --- Data & State ---
-let currentUser = null;
-let controllerIndex = 0;
-let lastButtonPress = 0;
-
-const pfpImages = [
-    'goodmanpfp.jpg', 'gtacarlpfp.jpg', 'jamesbondpfp.jpg', 'johnwickpfp.jpg',
-    'kratospfp.jpg', 'kratospfpb.jpg', 'luigipfp.jpg', 'mariopfp.jpg',
-    'milespfp.jpg', 'pacmangpfp.jpg', 'pyramidheadpfp.jpg', 'rambopfp.jpg',
-    'rdrpfp.png', 'shadowpfp.png', 'shrekpfp.jpg', 'silenthillpfp.jpg',
-    'sonicpfp.jpg', 'spidermanpfp.jpg'
-];
+// ==========================================
+// 1. MASTER GAME LIBRARY (GitHub Covers + Archive ISOs)
+// ==========================================
 const gameLibrary = {
     "God of War II": { 
         cover: "covers/godofwartwo.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/God%20of%20War%20II%20%28USA%29.iso" 
     },
-    "Black": { 
-        cover: "covers/black.jpg", 
-        url: "https://archive.org/download/god-of-war-ii-usa_202603/Black%20%28USA%29.iso" 
-    },
     "Spider-Man 3": { 
         cover: "covers/spiderman3.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/Spider-Man%203%20%28USA%29.iso" 
     },
-    "Simpsons Hit & Run": { 
+    "The Simpsons: Hit & Run": { 
         cover: "covers/simpsonhitnrun.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/Simpsons%2C%20The%20-%20Hit%20%26%20Run%20%28USA%29.iso" 
     },
-    "Need for Speed U2": { 
-        cover: "covers/nfsunderground2.jpg", 
-        url: "https://archive.org/download/god-of-war-ii-usa_202603/Need%20for%20Speed%20-%20Underground%202%20%28USA%29.iso" 
+    "Black": { 
+        cover: "covers/black.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Black%20%28USA%29.iso" 
     },
     "Metal Gear Solid 3": { 
         cover: "covers/metalgearsolid.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/Metal%20Gear%20Solid%203%20-%20Subsistence%20%28USA%29%20%28En%2CEs%29%20%28Disc%201%29%20%28Subsistence%29.iso" 
     },
-    "Shadow the Hedgehog": { 
-        cover: "covers/shadowthehedgehog.jpg", 
-        url: "https://archive.org/download/god-of-war-ii-usa_202603/Shadow%20the%20Hedgehog%20%28USA%29%20%28En%2CJa%2CFr%2CDe%2CEs%2CIt%29.iso" 
+    "Need for Speed: Underground 2": { 
+        cover: "covers/nfsunderground2.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Need%20for%20Speed%20-%20Underground%202%20%28USA%29.iso" 
     },
     "Red Dead Revolver": { 
         cover: "covers/rdr.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/Red%20Dead%20Revolver%20%28USA%29.iso" 
     },
+    "Shadow the Hedgehog": { 
+        cover: "covers/shadowthehedgehog.jpg", 
+        url: "https://archive.org/download/god-of-war-ii-usa_202603/Shadow%20the%20Hedgehog%20%28USA%29%20%28En%2CJa%2CFr%2CDe%2CEs%2CIt%29.iso" 
+    },
     "Madden NFL 12": { 
-        cover: "covers/madden12.jpg", 
+        cover: "covers/madden11.jpg", 
         url: "https://archive.org/download/god-of-war-ii-usa_202603/Madden%20NFL%2012%20%28USA%29.iso" 
     },
     "Harry Potter": { 
@@ -53,203 +44,188 @@ const gameLibrary = {
     }
 };
 
-// --- Initialization ---
-function init() {
-    checkLogin();
-    buildGameCarousel();
+// ==========================================
+// 2. THE STORAGE VAULT (IndexedDB)
+// ==========================================
+let db;
+const request = indexedDB.open("PS2_Console_Storage", 1);
+request.onupgradeneeded = (e) => {
+    db = e.target.result;
+    db.createObjectStore("iso_vault");
+};
+request.onsuccess = (e) => db = e.target.result;
+
+// ==========================================
+// 3. UI INITIALIZATION
+// ==========================================
+window.onload = () => {
     updateClock();
     setInterval(updateClock, 1000);
-    initBattery();
-    window.addEventListener("gamepadconnected", (e) => {
-        document.getElementById('active-gamepad').innerHTML = `Controller Connected <span class="status-badge">Online</span>`;
-        requestAnimationFrame(gamepadLoop);
-    });
+    buildGameCarousel();
+    loadProfileAvatars();
+};
+
+function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('clock').innerText = `${hours}:${minutes} ${ampm}`;
 }
 
-// --- Login & Save System ---
-function checkLogin() {
-    const savedData = localStorage.getItem('ps2_user_profile');
-    if (savedData) {
-        currentUser = JSON.parse(savedData);
-        applyUserData();
-        document.getElementById('login-screen').classList.remove('active');
-    } else {
-        document.getElementById('login-avatar').style.backgroundImage = `url('pfp/kratospfp.jpg')`;
-    }
-}
-
-function handleLogin() {
-    const user = document.getElementById('username-input').value.trim();
-    const pass = document.getElementById('password-input').value;
-    
-    if(!user || !pass) return;
-
-    // Check if returning user
-    const savedData = localStorage.getItem('ps2_user_profile');
-    if (savedData) {
-        const parsed = JSON.parse(savedData);
-        if (parsed.username === user && parsed.password !== pass) {
-            document.getElementById('login-error').style.display = 'block';
-            return;
-        }
-    }
-
-    // Create or Log In
-    currentUser = savedData ? JSON.parse(savedData) : { username: user, password: pass, pfp: 'goodmanpfp.jpg', theme: 'dark', fps: 60 };
-    if(!savedData) saveProfile(); 
-    
-    applyUserData();
-    document.getElementById('login-screen').classList.remove('active');
-}
-
-function handleLogout() {
-    document.getElementById('login-screen').classList.add('active');
-    document.getElementById('password-input').value = '';
-    document.getElementById('login-error').style.display = 'none';
-}
-
-function saveProfile() {
-    if(currentUser) localStorage.setItem('ps2_user_profile', JSON.stringify(currentUser));
-}
-
-function applyUserData() {
-    document.getElementById('display-username').innerText = currentUser.username;
-    document.getElementById('main-avatar').style.backgroundImage = `url('pfp/${currentUser.pfp}')`;
-    document.getElementById('login-avatar').style.backgroundImage = `url('pfp/${currentUser.pfp}')`;
-    toggleTheme(currentUser.theme, false);
-}
-
-// --- Controller Navigation (Gamepad API) ---
-function gamepadLoop() {
-    const gamepads = navigator.getGamepads();
-    if (!gamepads || !gamepads[0]) return;
-    const gp = gamepads[0];
-    const now = Date.now();
-
-    // Prevent button spamming (cooldown of 200ms)
-    if (now - lastButtonPress > 200) {
-        // Find all visible interactable elements
-        const focusables = Array.from(document.querySelectorAll('.focusable')).filter(el => el.offsetParent !== null);
-        
-        if(focusables.length > 0) {
-            // D-Pad or Left Stick Movement
-            if (gp.buttons[15]?.pressed || gp.axes[1] > 0.5 || gp.buttons[14]?.pressed || gp.axes[0] > 0.5) { // Right/Down
-                focusables[controllerIndex]?.classList.remove('focused');
-                controllerIndex = (controllerIndex + 1) % focusables.length;
-                lastButtonPress = now;
-            } else if (gp.buttons[12]?.pressed || gp.axes[1] < -0.5 || gp.buttons[13]?.pressed || gp.axes[0] < -0.5) { // Left/Up
-                focusables[controllerIndex]?.classList.remove('focused');
-                controllerIndex = (controllerIndex - 1 + focusables.length) % focusables.length;
-                lastButtonPress = now;
-            }
-            
-            // Highlight current
-            if(focusables[controllerIndex]) {
-                focusables.forEach(f => f.classList.remove('focused'));
-                focusables[controllerIndex].classList.add('focused');
-                focusables[controllerIndex].scrollIntoView({ block: "nearest", inline: "nearest" });
-            }
-
-            // 'A' or 'Cross' Button to Click
-            if (gp.buttons[0]?.pressed) {
-                focusables[controllerIndex].click();
-                lastButtonPress = now;
-                controllerIndex = 0; // Reset index on new screen
-            }
-        }
-    }
-    requestAnimationFrame(gamepadLoop);
-}
-
-// --- Live Real News Feed (RSS Proxy) ---
-async function openNews() {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '<p>Fetching live feed...</p>';
-    openMenu('news-view');
-    
-    try {
-        // Using a free RSS-to-JSON proxy to pull REAL gaming news from PushSquare/IGN style feeds
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.gameinformer.com/news.xml');
-        const data = await response.json();
-        
-        grid.innerHTML = '';
-        data.items.forEach((item) => {
-            // Extract image from description or use placeholder
-            const imgMatch = item.description.match(/src="(.*?)"/);
-            const imgSrc = imgMatch ? imgMatch[1] : 'https://picsum.photos/seed/'+Math.random()+'/400/200';
-            
-            grid.innerHTML += `
-                <div class="news-block focusable" onclick="window.open('${item.link}', '_blank')">
-                    <img src="${imgSrc}" alt="Article Image">
-                    <div class="news-content">
-                        <h3>${item.title}</h3>
-                    </div>
-                </div>`;
-        });
-    } catch(err) {
-        grid.innerHTML = '<p>Failed to load live news. Check your internet connection.</p>';
-    }
-}
-
-// --- Standard UI Functions ---
+// ==========================================
+// 4. CAROUSEL & DOWNLOAD LOGIC
+// ==========================================
 function buildGameCarousel() {
     const strip = document.getElementById('game-strip');
     strip.innerHTML = '';
-    games.forEach((name, i) => {
+    
+    Object.keys(gameLibrary).forEach((name, i) => {
+        const game = gameLibrary[name];
         const card = document.createElement('div');
         card.className = `game-card focusable ${i === 0 ? 'active' : ''}`;
+        
+        // Apply GitHub Cover Art
+        card.style.backgroundImage = `url('${game.cover}')`;
+        
+        if (i === 0) document.getElementById('game-title-display').innerText = name;
+
         card.onclick = () => {
-            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-            document.getElementById('game-title-display').innerText = name;
+            if (card.classList.contains('active')) {
+                // If already active, check vault / download / play
+                checkAndPlay(name);
+            } else {
+                // Make active and center
+                document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                document.getElementById('game-title-display').innerText = name;
+                card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            }
         };
         strip.appendChild(card);
     });
 }
 
-async function initBattery() {
-    const batteryStatus = document.getElementById('battery-status');
-    if ('getBattery' in navigator) {
-        try {
-            const battery = await navigator.getBattery();
-            const updateUI = () => batteryStatus.innerText = `${battery.charging ? '⚡' : '🔋'} ${Math.round(battery.level * 100)}%`;
-            updateUI();
-            battery.addEventListener('levelchange', updateUI);
-            battery.addEventListener('chargingchange', updateUI);
-        } catch (e) { batteryStatus.innerText = '🔋 --%'; }
-    }
+async function checkAndPlay(gameName) {
+    const container = document.getElementById('download-container');
+    const status = document.getElementById('download-status');
+    const bar = document.getElementById('download-bar');
+
+    // Open transaction to check Vault
+    const tx = db.transaction("iso_vault", "readonly");
+    const store = tx.objectStore("iso_vault");
+    const getReq = store.get(gameName);
+
+    getReq.onsuccess = async () => {
+        if (getReq.result) {
+            // Game exists! Boot it up.
+            bootGame(getReq.result, gameName);
+        } else {
+            // Game missing. Start Download.
+            container.classList.remove('hidden');
+            status.innerText = `Fetching ${gameName} from Cloud...`;
+            bar.style.width = "0%";
+
+            try {
+                // NOTE: Fetching directly from Archive.org. 
+                // If it fails, we will need a CORS proxy.
+                const response = await fetch(gameLibrary[gameName].url);
+                if (!response.ok) throw new Error("Network response was not ok");
+                
+                const reader = response.body.getReader();
+                const contentLength = +response.headers.get('Content-Length');
+                let receivedLength = 0;
+                let chunks = [];
+
+                while(true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                    receivedLength += value.length;
+                    
+                    let percent = (receivedLength / contentLength) * 100;
+                    bar.style.width = percent + "%";
+                    status.innerText = `Downloading: ${Math.round(percent)}%`;
+                }
+
+                // Save to IndexedDB
+                const fullBlob = new Blob(chunks);
+                const saveTx = db.transaction("iso_vault", "readwrite");
+                saveTx.objectStore("iso_vault").put(fullBlob, gameName);
+
+                status.innerText = "Install Complete!";
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                    bootGame(fullBlob, gameName);
+                }, 2000);
+
+            } catch (error) {
+                console.error("Download failed:", error);
+                status.innerText = "Download Error. Please check console.";
+                setTimeout(() => container.classList.add('hidden'), 4000);
+            }
+        }
+    };
 }
 
-function toggleTheme(mode, save = true) {
-    if(mode === 'light') document.body.classList.add('light-mode');
-    else document.body.classList.remove('light-mode');
-    if(save && currentUser) { currentUser.theme = mode; saveProfile(); }
+// ==========================================
+// 5. EMULATOR BOOT SEQUENCE
+// ==========================================
+function bootGame(blob, gameName) {
+    const playerOverlay = document.getElementById('game-player');
+    const loadScreen = document.getElementById('loading-screen');
+    const canvas = document.getElementById('emulator-canvas');
+    const bootText = document.getElementById('boot-text');
+
+    playerOverlay.classList.remove('hidden');
+    loadScreen.classList.remove('hidden');
+    canvas.classList.add('hidden');
+    bootText.innerText = `Mounting Disc: ${gameName}...`;
+
+    console.log(`Ready to pass ${blob.size} bytes to WASM core.`);
+
+    // Simulation of emulator load time
+    setTimeout(() => {
+        loadScreen.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        // Future code: Module.callMain() or WASM initialization goes here
+    }, 3000);
 }
 
-function setFPS(val) {
-    alert("System Frame Rate Limit target saved: " + val + " FPS");
-    if(currentUser) { currentUser.fps = val; saveProfile(); }
+function closeGame() {
+    document.getElementById('game-player').classList.add('hidden');
+    document.getElementById('emulator-canvas').classList.add('hidden');
 }
 
-function openPfpMenu() {
+// ==========================================
+// 6. MODAL & PROFILE LOGIC
+// ==========================================
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+function loadProfileAvatars() {
+    // You can point these to your 'pfp' folder images later
+    const pfps = [
+        "https://via.placeholder.com/60/ff0000/fff?text=K", // Kratos placeholder
+        "https://via.placeholder.com/60/0000ff/fff?text=S", // Spidey placeholder
+        "https://via.placeholder.com/60/00ff00/fff?text=L", // Luigi placeholder
+    ];
     const grid = document.getElementById('pfp-grid');
-    grid.innerHTML = '';
-    pfpImages.forEach(img => {
-        const el = document.createElement('img');
-        el.src = `pfp/${img}`;
-        el.className = 'pfp-option focusable';
-        el.onclick = () => {
-            if(currentUser) { currentUser.pfp = img; saveProfile(); applyUserData(); }
-            closeMenu('pfp-modal');
+    pfps.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'pfp-option';
+        img.onclick = () => {
+            document.getElementById('current-pfp').src = src;
+            closeModal('profile-modal');
         };
-        grid.appendChild(el);
+        grid.appendChild(img);
     });
-    openMenu('pfp-modal');
-    controllerIndex = 0; // Reset controller focus for the new menu
 }
-
-function openMenu(id) { document.getElementById(id).classList.add('active'); controllerIndex = 0; }
-function closeMenu(id) { document.getElementById(id).classList.remove('active'); controllerIndex = 0; }
-function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
-
-window.onload = init;
