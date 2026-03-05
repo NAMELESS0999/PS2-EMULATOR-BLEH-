@@ -173,18 +173,23 @@ async function checkAndPlay(gameName) {
 // ==========================================
 // 5. EMULATOR BOOT SEQUENCE
 // ==========================================
-function bootGame(blob, gameName) {
-    const playerOverlay = document.getElementById('game-player');
-    const loadScreen = document.getElementById('loading-screen');
-    const canvas = document.getElementById('emulator-canvas');
-    const bootText = document.getElementById('boot-text');
+async function bootGame(isoFile, name) {
+    // 1. Hide the menu and show the black game screen
+    document.getElementById('game-player').classList.remove('hidden');
+    
+    // 2. Start the Play! Engine
+    const p2 = await window.Play.create({
+        canvas: document.getElementById('emulator-canvas')
+    });
 
-    playerOverlay.classList.remove('hidden');
-    loadScreen.classList.remove('hidden');
-    canvas.classList.add('hidden');
-    bootText.innerText = `Mounting Disc: ${gameName}...`;
-
-    console.log(`Ready to pass ${blob.size} bytes to WASM core.`);
+    // 3. Put the game in the console
+    const disc = new File([isoFile], name + ".iso");
+    await p2.loadGame(disc);
+    
+    // 4. Hide the loading text so you can see the game
+    document.getElementById('loading-screen').classList.add('hidden');
+    document.getElementById('emulator-canvas').classList.remove('hidden');
+}
 
     // Simulation of emulator load time
     setTimeout(() => {
