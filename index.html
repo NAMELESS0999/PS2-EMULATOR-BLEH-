@@ -9,86 +9,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header class="top-bar">
-        <div class="user-profile focusable" onclick="openModal('profile-modal')">
-            <img src="pfp/default.png" alt="Profile" id="current-pfp" onerror="this.src='https://via.placeholder.com/40/333/fff?text=P1'">
-            <span id="player-name">Player 1</span>
-        </div>
-        <div class="system-info">
-            <span id="clock">12:00 PM</span>
-            <i class="fas fa-wifi"></i>
-            <i class="fas fa-battery-full"></i>
-        </div>
-    </header>
-
-    <main class="stage">
-        <h1 id="game-title-display">Select Software</h1>
-        
-        <div id="download-container" class="hidden">
-            <p id="download-status">Preparing System...</p>
-            <div class="progress-bar-bg">
-                <div id="download-bar" class="progress-bar-fill"></div>
+    <div id="ui-layer">
+        <header class="top-bar">
+            <div class="user-profile">
+                <img src="https://via.placeholder.com/40/333/fff?text=P1" alt="Profile" id="current-pfp">
+                <span>Player 1</span>
             </div>
-        </div>
+            <div class="system-info">
+                <span id="clock">12:00 PM</span>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </header>
 
-        <div class="carousel-container">
-            <div id="game-strip"></div>
-        </div>
-    </main>
+        <main class="stage">
+            <h1 id="game-title-display">Select Software</h1>
+            
+            <div class="carousel-container">
+                <div id="game-strip"></div>
+            </div>
+        </main>
 
-    <footer class="bottom-bar">
-        <div class="tool-icon focusable" onclick="openModal('news-modal')">
-            <i class="fas fa-newspaper"></i>
-            <span>News</span>
-        </div>
-        <div class="tool-icon focusable">
-            <i class="fas fa-gamepad"></i>
-            <span>Controllers</span>
-        </div>
-        <div class="tool-icon focusable">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </div>
-        <div class="tool-icon focusable" onclick="openModal('power-modal')">
-            <i class="fas fa-power-off"></i>
-            <span>Power</span>
-        </div>
-    </footer>
+        <footer class="bottom-bar">
+            <div class="tool-icon"><i class="fas fa-newspaper"></i><span>News</span></div>
+            <div class="tool-icon"><i class="fas fa-gamepad"></i><span>Controllers</span></div>
+            <div class="tool-icon"><i class="fas fa-cog"></i><span>Settings</span></div>
+            <div class="tool-icon" onclick="window.close()"><i class="fas fa-power-off"></i><span>Power</span></div>
+        </footer>
+    </div>
 
-    <div id="profile-modal" class="overlay hidden">
-        <div class="modal-box">
-            <h2>Select Profile Icon</h2>
-            <div class="pfp-grid" id="pfp-grid">
+    <div id="download-modal" class="overlay hidden">
+        <div class="switch-box">
+            <h2 id="dl-title">Downloading data...</h2>
+            <p class="dl-subtitle">Download will pause if the software being played uses communication features or when other software is downloaded.</p>
+            
+            <div class="switch-progress-container">
+                <i class="fas fa-spinner fa-spin spinner-icon"></i>
+                <div class="switch-bar-bg">
+                    <div id="switch-bar-fill" class="switch-bar-fill"></div>
                 </div>
-            <button class="close-btn focusable" onclick="closeModal('profile-modal')">Back</button>
+                <span id="switch-percent">0%</span>
+            </div>
+
+            <div id="dl-status-text" style="color: #666; font-size: 0.8rem; margin-bottom: 20px;">Initializing...</div>
+
+            <button class="switch-btn">Download Options</button>
+            <div class="switch-close" onclick="cancelDownload()">Close</div>
         </div>
     </div>
 
-    <div id="news-modal" class="overlay hidden">
-        <div class="modal-box large-modal">
-            <h2>Gaming Pulse</h2>
-            <p>Stay tuned for the latest PS2 updates!</p>
-            <button class="close-btn focusable" onclick="closeModal('news-modal')">Back</button>
-        </div>
-    </div>
-
-    <div id="power-modal" class="overlay hidden">
-        <div class="modal-box">
-            <h2>Power Options</h2>
-            <button class="power-btn focusable" style="color: #ff4444;" onclick="window.close()">Turn Off Console</button>
-            <button class="close-btn focusable" onclick="closeModal('power-modal')">Back</button>
-        </div>
-    </div>
-
-    <div id="game-player" class="overlay hidden" style="background: #000; flex-direction: column;">
-        <div id="loading-screen" style="text-align: center; color: white;">
-            <div class="loader"></div>
-            <p id="boot-text">Initialising System...</p>
-        </div>
-        <canvas id="emulator-canvas" class="hidden"></canvas>
-        <div class="game-controls">
-            <button class="focusable close-btn" onclick="closeGame()">Close Game</button>
-        </div>
+    <div id="emulator-layer" class="hidden">
+        <canvas id="emulator-canvas"></canvas>
+        <button id="exit-game-btn" onclick="exitGame()"><i class="fas fa-times"></i> Exit Game</button>
     </div>
 
     <script src="script.js"></script>
